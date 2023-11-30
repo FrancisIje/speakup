@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/screens/get_started/getstarted.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
@@ -55,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20.r),
                       child: SizedBox(
-                        height: appHeight(context) * 0.38,
+                        height: appHeight(context) * 0.37,
                         width: double.maxFinite,
                         child: Image.asset(
                           "images/womanpurple.png",
@@ -68,7 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextFormField(
                       controller: emailTextController,
-                      obscureText: obsureText,
                       decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Color(0xFF777777)),
                           hintText: "Email address",
@@ -114,29 +114,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 14.h,
                     ),
                     ElevatedButton(
-                        onPressed: () {
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //   builder: (context) => SignUpScreen(),
-                          // ));
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: const MaterialStatePropertyAll(
-                              Color.fromRGBO(104, 73, 255, 1)),
-                          fixedSize: MaterialStatePropertyAll(
-                              Size(double.maxFinite, 50.h)),
-                          shape: const MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.horizontal(
-                                      left: Radius.circular(40),
-                                      right: Radius.circular(40)))),
-                        ),
-                        child: Text(
-                          "Sign in",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.sp),
-                        )),
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor: const MaterialStatePropertyAll(
+                            Color.fromRGBO(104, 73, 255, 1)),
+                        fixedSize: MaterialStatePropertyAll(
+                            Size(double.maxFinite, 50.h)),
+                        shape: const MaterialStatePropertyAll(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(40),
+                                    right: Radius.circular(40)))),
+                      ),
+                      child: Text(
+                        "Sign in",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.sp),
+                      ),
+                    ),
                     SizedBox(
                       height: 14.h,
                     ),
@@ -153,12 +150,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           width: 6.w,
                         ),
-                        Text(
-                          "Sign up",
-                          style: TextStyle(
-                              color: const Color.fromRGBO(104, 73, 255, 1),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w700),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const GetStartedScreen(),
+                            ));
+                          },
+                          child: Text(
+                            "Sign up",
+                            style: TextStyle(
+                                color: const Color.fromRGBO(104, 73, 255, 1),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700),
+                          ),
                         )
                       ],
                     )

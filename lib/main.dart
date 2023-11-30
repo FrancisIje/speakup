@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/screens/get_started/getstarted.dart';
 // import 'package:provider/provider.dart';
 import 'package:speakup/screens/login/loginscreen.dart';
 import 'package:speakup/screens/splash/splashscreen.dart';
@@ -26,8 +27,8 @@ class SpeakUpApp extends StatelessWidget {
             routes: {
               AppRouteConstants.loginRouteName: (context) =>
                   const LoginScreen(),
-              // AppRouteConstants.onboarding1RouteName: (context) =>
-              //     const OnboardingScreen1(),
+              AppRouteConstants.getStartedRouteName: (context) =>
+                  const GetStartedScreen(),
               // AppRouteConstants.onboarding4RouteName: (context) =>
               //     const OnboardingScreen4(),
               // AppRouteConstants.onboarding3RouteName: (context) =>
