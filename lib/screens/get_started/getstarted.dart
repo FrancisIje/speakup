@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/screens/signup/names.dart';
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
 
@@ -87,9 +88,9 @@ class GetStartedScreen extends StatelessWidget {
                 const Expanded(child: SizedBox()),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) => SignUpScreen(),
-                    // ));
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const SignUp1Screen(),
+                    ));
                   },
                   style: ButtonStyle(
                     backgroundColor: const MaterialStatePropertyAll(
