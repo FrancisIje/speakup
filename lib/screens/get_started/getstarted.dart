@@ -56,7 +56,7 @@ class GetStartedScreen extends StatelessWidget {
                         child: SizedBox(
                           width: double.maxFinite,
                           child: Image.asset(
-                            "images/womanpurple.png",
+                            "images/mangreen.png",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -66,7 +66,7 @@ class GetStartedScreen extends StatelessWidget {
                         child: SizedBox(
                           width: double.maxFinite,
                           child: Image.asset(
-                            "images/womanpurple.png",
+                            "images/manpurple.png",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -76,7 +76,7 @@ class GetStartedScreen extends StatelessWidget {
                         child: SizedBox(
                           width: double.maxFinite,
                           child: Image.asset(
-                            "images/womanpurple.png",
+                            "images/manyellow.png",
                             fit: BoxFit.cover,
                           ),
                         ),

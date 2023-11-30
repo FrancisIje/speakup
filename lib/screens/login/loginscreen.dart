@@ -68,6 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 20.h,
                     ),
                     TextFormField(
+                      validator: (value) {
+                        if (value != null) {
+                          return 'Enter email';
+                        } else {
+                          return null;
+                        }
+                      },
                       controller: emailTextController,
                       decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Color(0xFF777777)),
@@ -83,6 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 14.h,
                     ),
                     TextFormField(
+                      validator: (value) {
+                        if (value != null) {
+                          return 'Enter password';
+                        } else {
+                          return null;
+                        }
+                      },
                       controller: passwordTextController,
                       obscureText: obsureText,
                       decoration: InputDecoration(
@@ -114,7 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 14.h,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          print('logged in');
+                        }
+                      },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(
                             Color.fromRGBO(104, 73, 255, 1)),
