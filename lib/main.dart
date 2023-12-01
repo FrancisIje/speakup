@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speakup/screens/get_started/getstarted.dart';
 // import 'package:provider/provider.dart';
 import 'package:speakup/screens/login/loginscreen.dart';
+import 'package:speakup/screens/signup/pfp.dart';
+import 'package:speakup/screens/signup/verify.dart';
+import 'package:speakup/screens/signup/verify_builder.dart';
 import 'package:speakup/screens/splash/splashscreen.dart';
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/theme.dart';
@@ -29,12 +32,12 @@ class SpeakUpApp extends StatelessWidget {
                   const LoginScreen(),
               AppRouteConstants.getStartedRouteName: (context) =>
                   const GetStartedScreen(),
-              // AppRouteConstants.onboarding4RouteName: (context) =>
-              //     const OnboardingScreen4(),
-              // AppRouteConstants.onboarding3RouteName: (context) =>
-              //     const OnboardingScreen3(),
-              // AppRouteConstants.onboarding2RouteName: (context) =>
-              //     const OnboardingScreen2(),
+              AppRouteConstants.picUploadRouteName: (context) =>
+                  const ProfilePicScreen(),
+              AppRouteConstants.verifyemailRouteName: (context) =>
+                  const VerifyEmailScreen(),
+              AppRouteConstants.verifybuilderRouteName: (context) =>
+                  const VerifyBuilder(),
               // AppRouteConstants.onboarding5RouteName: (context) =>
               //     const OnboardingScreen5(),
               // AppRouteConstants.homeRouteName: (context) => const Home(),

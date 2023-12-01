@@ -142,9 +142,8 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          print('logged in');
-                        }
+                        Navigator.pushNamed(
+                            context, AppRouteConstants.picUploadRouteName);
                       },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(

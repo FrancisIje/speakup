@@ -3,10 +3,10 @@ class AppRouteConstants {
   static const loginRouteName = "/login";
   static const signupRouteName = "/signup";
   static const getStartedRouteName = "/getStarted";
-  static const onboarding2RouteName = "/onboarding2";
-  static const onboarding3RouteName = "/onboarding3";
-  static const onboarding4RouteName = "/onboarding4";
-  static const onboarding5RouteName = "/onboarding5";
+  static const picUploadRouteName = "/picUpload";
+  static const verifyemailRouteName = "/verifyemail";
+  static const chooselanguageRouteName = "/language";
+  static const verifybuilderRouteName = "/verifybuilder";
   static const editProfileRouteName = "/edit-profile";
   static const myProfileRouteName = "/my-profile";
   static const userProfileRouteName = "/user-profile";

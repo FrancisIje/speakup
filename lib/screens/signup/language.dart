@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/screens/signup/names.dart';
-import 'package:speakup/utils/app_route_const.dart';
+
+import 'package:speakup/screens/signup/passwords.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -30,12 +30,12 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   height: 4.h,
                 ),
                 Text(
-                  "Kindly choose your target language to \ncontinue",
+                  "Which language do you plan to study",
                   style:
                       TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w400),
                 ),
                 SizedBox(
-                  height: 20.h,
+                  height: 30.h,
                 ),
                 DropdownButtonHideUnderline(
                   child: DropdownButtonFormField<String>(
@@ -102,7 +102,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const SignUp1Screen(),
+                      builder: (context) => const PasswordSetScreen(),
                     ));
                   },
                   style: ButtonStyle(

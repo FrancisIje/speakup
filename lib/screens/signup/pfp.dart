@@ -125,9 +125,8 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          print('logged in');
-                        }
+                        Navigator.pushNamed(
+                            context, AppRouteConstants.verifybuilderRouteName);
                       },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(
