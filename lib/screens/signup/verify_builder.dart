@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:speakup/screens/signup/language.dart';
+
+import 'package:speakup/screens/signup/passwords.dart';
 import 'package:speakup/screens/signup/verify.dart';
 
 class VerifyBuilder extends StatefulWidget {
@@ -22,7 +23,7 @@ class _VerifyBuilderState extends State<VerifyBuilder> {
 
           case ConnectionState.active:
           case ConnectionState.done:
-            return const LanguageScreen();
+            return const PasswordSetScreen();
         }
       },
     );

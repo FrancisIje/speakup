@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/screens/signup/names.dart';
+import 'package:speakup/screens/home/voctest.dart';
+
 import 'package:speakup/utils/responsive.dart';
 
 class TutorScreen extends StatefulWidget {
@@ -178,7 +179,7 @@ class _TutorScreenState extends State<TutorScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const SignUp1Screen(),
+                      builder: (context) => const VocText(),
                     ));
                   },
                   style: ButtonStyle(

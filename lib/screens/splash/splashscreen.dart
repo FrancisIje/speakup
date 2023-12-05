@@ -1,7 +1,9 @@
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:speakup/screens/get_started/getstarted.dart';
 
 import 'package:speakup/screens/login/loginscreen.dart';
+import 'package:speakup/screens/signup/names.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,20 +17,22 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     // var user = FirebaseAuthProvider().currentUser;
     return FlutterSplashScreen.fadeIn(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF440d56),
       onInit: () async {
         debugPrint("On Init");
       },
       onEnd: () {
         debugPrint("On End");
       },
-      childWidget: SizedBox(
+      childWidget: const SizedBox(
         height: 200,
         width: 200,
-        child: Image.asset("images/speakup.png"),
+        child: CircleAvatar(
+          backgroundImage: AssetImage("images/speakup.png"),
+        ),
       ),
       onAnimationEnd: () => debugPrint("On Fade In End"),
-      nextScreen: const LoginScreen(),
+      nextScreen: const GetStartedScreen(),
       // nextScreen: user == null ? const LoginScreen() : const Home(),
     );
   }

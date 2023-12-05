@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:speakup/screens/signup/passwords.dart';
+import 'package:speakup/screens/signup/tutor.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -102,7 +102,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const PasswordSetScreen(),
+                      builder: (context) => const TutorScreen(),
                     ));
                   },
                   style: ButtonStyle(
