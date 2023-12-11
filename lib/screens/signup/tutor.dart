@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/screens/home/voctest.dart';
+import 'package:speakup/screens/home/conversation.dart';
 
 import 'package:speakup/utils/responsive.dart';
 
@@ -179,7 +179,7 @@ class _TutorScreenState extends State<TutorScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const VocText(),
+                      builder: (context) => const ConversationScreen(),
                     ));
                   },
                   style: ButtonStyle(
