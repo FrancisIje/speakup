@@ -10,5 +10,7 @@ class AppRouteConstants {
   static const editProfileRouteName = "/edit-profile";
   static const myProfileRouteName = "/my-profile";
   static const userProfileRouteName = "/user-profile";
-  static const splahscreenRouteName = "/splash";
+  static const splashscreenRouteName = "/splash";
+  static const definitionScreenRouteName = "/definition";
+  static const passwordScreenRouteName = "/password";
 }
