@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class SpeakupUser {
   String firstName;
   String lastName;

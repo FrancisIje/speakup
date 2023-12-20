@@ -1,9 +1,12 @@
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:speakup/models/user.dart';
+import 'package:speakup/provider/user_provider.dart';
 import 'package:speakup/screens/get_started/getstarted.dart';
-
-import 'package:speakup/screens/login/loginscreen.dart';
-import 'package:speakup/screens/signup/names.dart';
+import 'package:speakup/screens/home/conversation.dart';
+import 'package:speakup/services/auth/firebase_auth_provider.dart';
+import 'package:speakup/services/cloud/firebase_cloud.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,13 +16,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  SpeakupUser? userInfo;
+
   @override
   Widget build(BuildContext context) {
-    // var user = FirebaseAuthProvider().currentUser;
+    var user = FirebaseAuthProvider().currentUser;
+
     return FlutterSplashScreen.fadeIn(
       backgroundColor: const Color(0xFF440d56),
       onInit: () async {
         debugPrint("On Init");
+        SpeakupUser? user = await FirebaseCloud().getCurrentUser();
+        if (user != null) {
+          Provider.of<UserInfoProvider>(context, listen: false).setUser(user);
+        }
       },
       onEnd: () {
         debugPrint("On End");
@@ -32,8 +42,9 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
       onAnimationEnd: () => debugPrint("On Fade In End"),
-      nextScreen: const GetStartedScreen(),
-      // nextScreen: user == null ? const LoginScreen() : const Home(),
+      // nextScreen: const GetStartedScreen(),
+      nextScreen:
+          user == null ? const GetStartedScreen() : const ConversationScreen(),
     );
   }
 }

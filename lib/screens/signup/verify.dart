@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/screens/signup/pfp.dart';
+import 'package:speakup/services/auth/auth_provider.dart';
+import 'package:speakup/services/auth/auth_service.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
@@ -25,6 +29,19 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Listen to authentication state changes
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      // print(user!.email);
+      // print(user.emailVerified);
+      // user.reload();
+
+      // Check if the user is signed in and email is verified
+      if (user != null && user.emailVerified) {
+        // Navigate to the profile pic screen when email is verified
+        Navigator.of(context)
+            .pushReplacementNamed(AppRouteConstants.picUploadRouteName);
+      }
+    });
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -52,6 +69,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     SizedBox(
                       height: 54.h,
                     ),
+                    IconButton(
+                      onPressed: () {
+                        FirebaseAuth.instance.currentUser!.reload();
+                        setState(() {});
+                      },
+                      icon: Icon(Icons.refresh_outlined),
+                    ),
+                    Text("Reload screen"),
+                    SizedBox(
+                      height: 34.h,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -68,9 +96,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Navigator.of(context).push(MaterialPageRoute(
-                            //   builder: (context) => const GetStartedScreen(),
-                            // ));
+                            // AuthService.firebase().logOut();
                           },
                           child: Text(
                             "Resend in 30 seconds",

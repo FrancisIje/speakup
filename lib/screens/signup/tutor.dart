@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/models/user.dart';
 import 'package:speakup/screens/home/conversation.dart';
+import 'package:speakup/screens/signup/language.dart'
+    show selectedLanguage, selectedLangLevel;
+import 'package:speakup/screens/signup/names.dart'
+    show
+        emailTextController,
+        lastNameTextController,
+        firstNameTextController,
+        phoneNumTextController;
+import 'package:speakup/screens/signup/pfp.dart' show picUrl;
+import 'package:speakup/services/cloud/firebase_cloud.dart';
 
 import 'package:speakup/utils/responsive.dart';
 
@@ -14,7 +25,7 @@ class TutorScreen extends StatefulWidget {
 class _TutorScreenState extends State<TutorScreen> {
   @override
   Widget build(BuildContext context) {
-    String? selectedLanguage;
+    String? selectedTutor;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -78,7 +89,7 @@ class _TutorScreenState extends State<TutorScreen> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButtonFormField<String>(
                               hint: const Text('Choose voice'),
-                              value: selectedLanguage,
+                              value: selectedTutor,
                               icon: const Icon(Icons.arrow_drop_down),
                               iconSize: 24,
                               elevation: 16,
@@ -86,7 +97,7 @@ class _TutorScreenState extends State<TutorScreen> {
                                   color: Colors.black, fontSize: 14),
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  selectedLanguage = newValue!;
+                                  selectedTutor = newValue!;
                                 });
                               },
                               decoration: InputDecoration(
@@ -130,12 +141,19 @@ class _TutorScreenState extends State<TutorScreen> {
                         SizedBox(
                           height: 10.h,
                         ),
+                        Visibility(
+                          child: Text(
+                            "Female",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          visible: selectedTutor == "Female",
+                        ),
                         SizedBox(
                           width: appWidth(context) * 0.46,
                           child: DropdownButtonHideUnderline(
                             child: DropdownButtonFormField<String>(
                               hint: const Text('Choose voice'),
-                              value: selectedLanguage,
+                              value: selectedTutor,
                               icon: const Icon(Icons.arrow_drop_down),
                               iconSize: 24,
                               elevation: 16,
@@ -143,7 +161,7 @@ class _TutorScreenState extends State<TutorScreen> {
                                   color: Colors.black, fontSize: 14),
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  selectedLanguage = newValue!;
+                                  selectedTutor = newValue!;
                                 });
                               },
                               decoration: InputDecoration(
@@ -155,10 +173,10 @@ class _TutorScreenState extends State<TutorScreen> {
                                     vertical: 10, horizontal: 15),
                               ),
                               items: <String>[
-                                'Voice 1',
-                                'Voice 2',
-                                'Voice 3',
-                                'Voice 4'
+                                'Voice 5',
+                                'Voice 5',
+                                'Voice 7',
+                                'Voice 8'
                               ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -177,10 +195,27 @@ class _TutorScreenState extends State<TutorScreen> {
                 ),
                 const Expanded(child: SizedBox()),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ConversationScreen(),
-                    ));
+                  onPressed: () async {
+                    print("buttom");
+                    try {
+                      print("tapped");
+                      SpeakupUser user = SpeakupUser(
+                          firstName: firstNameTextController.text,
+                          lastName: lastNameTextController.text,
+                          email: emailTextController.text,
+                          phoneNumber: phoneNumTextController.text,
+                          targetLanguage: selectedLanguage ?? "",
+                          nativeLanguage: " ",
+                          profilePictureUrl: picUrl ?? "",
+                          tutorGender: selectedTutor ?? "");
+                      await FirebaseCloud()
+                          .updateUserData(user.toSpeakupUserMap());
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ConversationScreen(),
+                      ));
+                    } catch (e) {
+                      print(e);
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor: const MaterialStatePropertyAll(

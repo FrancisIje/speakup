@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speakup/services/auth/firebase_auth_provider.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
+
+final emailTextController = TextEditingController();
+final firstNameTextController = TextEditingController();
+final lastNameTextController = TextEditingController();
+final phoneNumTextController = TextEditingController();
 
 class SignUp1Screen extends StatefulWidget {
   const SignUp1Screen({super.key});
@@ -12,12 +19,17 @@ class SignUp1Screen extends StatefulWidget {
 }
 
 class _SignUp1ScreenState extends State<SignUp1Screen> {
-  final emailTextController = TextEditingController();
-  final passwordTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  final formKey = GlobalKey<FormState>();
+  bool isEmailValid(String email) {
+    // Define a regular expression for a simple email validation
+    RegExp emailRegExp =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
 
-  bool obsureText = true;
+    // Check if the email matches the regular expression
+    return emailRegExp.hasMatch(email);
+  }
+
   void navToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
         AppRouteConstants.homeRouteName, (route) => false);
@@ -32,7 +44,7 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Form(
-              key: formKey,
+              key: _formKey,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -46,13 +58,13 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null) {
                           return 'Enter first name';
                         } else {
                           return null;
                         }
                       },
-                      controller: emailTextController,
+                      controller: firstNameTextController,
                       decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Color(0xFF777777)),
                           hintText: "First Name",
@@ -68,13 +80,13 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null || value.isEmpty) {
                           return 'Enter last name';
                         } else {
                           return null;
                         }
                       },
-                      controller: emailTextController,
+                      controller: lastNameTextController,
                       decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Color(0xFF777777)),
                           hintText: "Last Name",
@@ -90,10 +102,13 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null || value.isEmpty) {
                           return 'Enter email';
-                        } else {
+                        }
+                        if (isEmailValid(value)) {
                           return null;
+                        } else {
+                          return "Enter a valid email";
                         }
                       },
                       controller: emailTextController,
@@ -112,26 +127,18 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null || value.isEmpty) {
                           return 'Enter phone number';
                         } else {
                           return null;
                         }
                       },
-                      controller: passwordTextController,
-                      obscureText: obsureText,
+                      controller: phoneNumTextController,
                       decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Color(0xFF777777)),
                           hintText: "Phone number",
                           fillColor: Colors.white,
                           filled: true,
-                          suffixIcon: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  obsureText = !obsureText;
-                                });
-                              },
-                              child: const Icon(Icons.remove_red_eye_outlined)),
                           border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius:
@@ -142,8 +149,10 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, AppRouteConstants.picUploadRouteName);
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.pushNamed(context,
+                              AppRouteConstants.passwordScreenRouteName);
+                        }
                       },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(

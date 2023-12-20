@@ -11,8 +11,6 @@ import 'package:record_mp3/record_mp3.dart';
 // import 'package:record/record.dart';
 import 'package:speakup/screens/home/widget/chat_message.dart';
 
-import 'package:speakup/screens/home/widget/receivedmsg.dart';
-import 'package:speakup/screens/home/widget/sentmsg.dart';
 import 'package:speakup/services/gpt/gpt.dart';
 
 class ChatWidget extends StatefulWidget {

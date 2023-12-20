@@ -18,9 +18,6 @@ class ChatGPTApi {
       "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";
   // "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";
 
-  // Initialize the Completer
-  // Completer<bool> playbackCompleter = Completer<bool>();
-
   ChatGPTApi(this.context);
 
   Future<String> getChatCompletion(String question) async {
@@ -99,80 +96,6 @@ class ChatGPTApi {
       Provider.of<ToggleProvider>(context, listen: false).toggleSelection();
     });
   }
-
-  // Future<String?> sendAudioToOpenAI(String filePath) async {
-  //   try {
-  //     var uri = Uri.parse('https://api.openai.com/v1/audio/transcriptions');
-  //     var request = http.MultipartRequest('POST', uri);
-
-  //     request.headers['Authorization'] = 'Bearer $openaiApiKey';
-  //     request.headers['Content-Type'] = 'multipart/form-data';
-
-  //     // Explicitly set the content length
-  //     var file = await http.MultipartFile.fromPath('file', filePath);
-  //     request.headers['Content-Length'] = file.length.toString();
-
-  //     request.files.add(file);
-  //     request.fields['model'] = 'whisper-1';
-
-  //     var response = await http.Response.fromStream(await request.send());
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       // Parse the OpenAI API response
-  //       var decodedResponse = jsonDecode(response.body);
-
-  //       // Extract the transcribed text
-  //       String transcribedText = decodedResponse['text'];
-  //       print('Transcribed Text: $transcribedText');
-  //       return transcribedText;
-  //     } else {
-  //       print(
-  //           'Failed to transcribe audio. Status code: ${response.statusCode}, ${response.body}');
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print('Error sending audio to OpenAI: $e');
-  //     return null;
-  //   }
-  // }
-
-  // Future<String?> sendAudioToOpenAI(File audioFile) async {
-  //   if (!audioFile.existsSync()) {
-  //     print('Audio file does not exist at ${audioFile.path}');
-  //     return null;
-  //   }
-
-  //   try {
-  //     var uri = Uri.parse('https://api.openai.com/v1/audio/transcriptions');
-  //     var request = http.MultipartRequest('POST', uri);
-
-  //     request.headers['Authorization'] = 'Bearer $openaiApiKey';
-  //     request.fields['model'] = 'whisper-1';
-
-  //     // Add the audio file to the request
-  //      request.files
-  //         .add(await http.MultipartFile.fromPath('file', audioFile.path));
-
-  //     var response = await http.Response.fromStream(await request.send());
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       // Parse the OpenAI API response
-  //       var decodedResponse = jsonDecode(response.body);
-
-  //       // Extract the transcribed text
-  //       String transcribedText = decodedResponse['text'];
-  //       print('Transcribed Text: $transcribedText');
-  //       return transcribedText;
-  //     } else {
-  //       print(
-  //           'Failed to transcribe audio. Status code: ${response.statusCode}, ${response.body}');
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print('Error sending audio to OpenAI: $e');
-  //     return null;
-  //   }
-  // }
 
   Future<String?> transcribeAudio(String audioFilePath) async {
     final dio = Dio();

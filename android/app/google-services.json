@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "617408675528",
+    "project_id": "speakup-b938b",
+    "storage_bucket": "speakup-b938b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617408675528:android:c23efb6806a29d936feffd",
+        "android_client_info": {
+          "package_name": "com.example.speakup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3Ul7HslpTjfd8BmbWfeNWClCAMWkOEtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

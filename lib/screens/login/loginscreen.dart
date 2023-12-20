@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speakup/screens/get_started/getstarted.dart';
+import 'package:speakup/screens/home/conversation.dart';
+import 'package:speakup/services/auth/auth_service.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
@@ -69,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null) {
                           return 'Enter email';
                         } else {
                           return null;
@@ -91,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextFormField(
                       validator: (value) {
-                        if (value != null) {
+                        if (value == null) {
                           return 'Enter password';
                         } else {
                           return null;
@@ -119,10 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 14.h,
                     ),
-                    Text(
-                      "Forgot password?",
-                      style: TextStyle(
-                          fontSize: 14.sp, fontStyle: FontStyle.italic),
+                    GestureDetector(
+                      onTap: () {
+                        // AuthService.firebase().sendPasswordReset(toEmail: toEmail)
+                      },
+                      child: Text(
+                        "Forgot password?",
+                        style: TextStyle(
+                            fontSize: 14.sp, fontStyle: FontStyle.italic),
+                      ),
                     ),
                     SizedBox(
                       height: 14.h,
@@ -131,6 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           print('logged in');
+
+                          AuthService.firebase()
+                              .logIn(
+                                  email: emailTextController.text,
+                                  password: passwordTextController.text)
+                              .then((value) =>
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ConversationScreen(),
+                                  )));
                         }
                       },
                       style: ButtonStyle(

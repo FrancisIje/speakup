@@ -1,8 +1,15 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' as io;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:speakup/screens/signup/language.dart';
+import 'package:speakup/services/auth/auth_service.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
+
+String? picUrl;
 
 class ProfilePicScreen extends StatefulWidget {
   const ProfilePicScreen({super.key});
@@ -17,10 +24,58 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
 
   final formKey = GlobalKey<FormState>();
 
+  io.File? _image;
+  late XFile? pickedImage;
+
   bool obsureText = true;
   void navToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
         AppRouteConstants.homeRouteName, (route) => false);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      pickedImage = await ImagePicker().pickImage(source: source);
+      if (pickedImage != null) {
+        setState(() {
+          _image = io.File(pickedImage!.path);
+        });
+      }
+    } catch (e) {
+      print("ImagePicker error: $e");
+    }
+  }
+
+  Future<void> uploadFile(XFile? file) async {
+    if (file == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No file was selected'),
+        ),
+      );
+    }
+
+    UploadTask uploadTask;
+
+    try {
+      // Create a Reference to the file
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child("users")
+          .child(AuthService.firebase().currentUser!.id);
+
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {'picked-file-path': file!.path},
+      );
+
+      uploadTask = ref.putFile(io.File(file.path), metadata);
+      await Future.value(uploadTask);
+
+      picUrl = await ref.getDownloadURL();
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -45,16 +100,23 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
                       height: 14.h,
                     ),
                     Center(
-                      child: Icon(
-                        Icons.account_circle_outlined,
-                        size: 250.h,
-                      ),
+                      child: _image == null
+                          ? Icon(
+                              Icons.account_circle_outlined,
+                              size: 250.h,
+                            )
+                          : CircleAvatar(
+                              radius: 125.r,
+                              backgroundImage: FileImage(_image!),
+                            ),
                     ),
                     SizedBox(
                       height: 30.h,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _pickImage(ImageSource.gallery);
+                      },
                       style: ButtonStyle(
                         backgroundColor:
                             const MaterialStatePropertyAll(Colors.white),
@@ -90,7 +152,9 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
                       height: 14.h,
                     ),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _pickImage(ImageSource.camera);
+                      },
                       style: ButtonStyle(
                         fixedSize: MaterialStatePropertyAll(
                             Size(double.maxFinite, 50.h)),
@@ -124,9 +188,21 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
                       height: appHeight(context) * 0.18,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                            context, AppRouteConstants.verifybuilderRouteName);
+                      onPressed: () async {
+                        if (_image != null) {
+                          try {
+                            await uploadFile(pickedImage);
+                            // Navigator.pushNamed(context,
+                            //     AppRouteConstants.verifybuilderRouteName);
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => LanguageScreen(),
+                            ));
+                          } catch (e) {
+                            SnackBar(content: Text("Error, try again"));
+                          }
+                        } else {
+                          SnackBar(content: Text("Input an image"));
+                        }
                       },
                       style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll(

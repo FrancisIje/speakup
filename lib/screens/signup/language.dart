@@ -10,10 +10,12 @@ class LanguageScreen extends StatefulWidget {
   State<LanguageScreen> createState() => _LanguageScreenState();
 }
 
+String? selectedLanguage;
+String? selectedLangLevel;
+
 class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
-    String? selectedLanguage;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -72,14 +74,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 DropdownButtonHideUnderline(
                   child: DropdownButtonFormField<String>(
                     hint: const Text('Choose proficiency level'),
-                    value: selectedLanguage,
+                    value: selectedLangLevel,
                     icon: const Icon(Icons.arrow_drop_down),
                     iconSize: 24,
                     elevation: 16,
                     style: const TextStyle(color: Colors.black, fontSize: 18),
                     onChanged: (String? newValue) {
                       setState(() {
-                        selectedLanguage = newValue!;
+                        selectedLangLevel = newValue!;
                       });
                     },
                     decoration: InputDecoration(
