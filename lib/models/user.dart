@@ -4,6 +4,7 @@ class SpeakupUser {
   String email;
   String phoneNumber;
   String targetLanguage;
+  String targetLangLevel;
   String nativeLanguage;
   String tutorGender;
   String profilePictureUrl; // Firebase Storage URL
@@ -14,6 +15,7 @@ class SpeakupUser {
       required this.email,
       required this.phoneNumber,
       required this.targetLanguage,
+      required this.targetLangLevel,
       required this.nativeLanguage,
       required this.profilePictureUrl,
       required this.tutorGender});
@@ -25,6 +27,7 @@ class SpeakupUser {
       'email': email,
       'phoneNumber': phoneNumber,
       'targetLanguage': targetLanguage,
+      'targetLangLevel': targetLangLevel,
       'nativeLanguage': nativeLanguage,
       'profilePictureUrl': profilePictureUrl,
       'tutorGender': tutorGender,
@@ -38,6 +41,7 @@ class SpeakupUser {
       email: map['email'],
       phoneNumber: map['phoneNumber'],
       targetLanguage: map['targetLanguage'],
+      targetLangLevel: map['targetLangLevel'],
       nativeLanguage: map['nativeLanguage'],
       profilePictureUrl: map['profilePictureUrl'],
       tutorGender: map['tutorGender'],

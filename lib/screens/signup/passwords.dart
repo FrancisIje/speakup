@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/screens/signup/language.dart';
+
 import 'package:speakup/screens/signup/names.dart' show emailTextController;
-import 'package:speakup/screens/signup/verify_builder.dart';
+
 import 'package:speakup/services/auth/auth_service.dart';
 import 'package:speakup/utils/app_route_const.dart';
 
