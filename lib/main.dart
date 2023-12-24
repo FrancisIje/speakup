@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:speakup/firebase_options.dart';
+import 'package:speakup/provider/chat_message.dart';
+import 'package:speakup/provider/conversation_state_provider.dart';
 import 'package:speakup/provider/is_talking.dart';
+import 'package:speakup/provider/text_word_switch.dart';
+import 'package:speakup/provider/tooltip_provider.dart';
 import 'package:speakup/provider/user_provider.dart';
+import 'package:speakup/provider/video_state.dart';
+import 'package:speakup/provider/vtt_filepath.dart';
 import 'package:speakup/provider/widget_switch.dart';
 import 'package:speakup/screens/definition/definition_screen.dart';
 import 'package:speakup/screens/get_started/getstarted.dart';
@@ -45,6 +51,24 @@ class SpeakUpApp extends StatelessWidget {
               ),
               ChangeNotifierProvider<UserInfoProvider>(
                 create: (context) => UserInfoProvider(),
+              ),
+              ChangeNotifierProvider<TextWordProvider>(
+                create: (context) => TextWordProvider(),
+              ),
+              ChangeNotifierProvider<TooltipProvider>(
+                create: (context) => TooltipProvider(),
+              ),
+              ChangeNotifierProvider<VttFilePathProvider>(
+                create: (context) => VttFilePathProvider(),
+              ),
+              ChangeNotifierProvider<ChatMessageProvider>(
+                create: (context) => ChatMessageProvider(),
+              ),
+              ChangeNotifierProvider<ConversationStateProvider>(
+                create: (context) => ConversationStateProvider(),
+              ),
+              ChangeNotifierProvider<VideoState>(
+                create: (context) => VideoState(),
               ),
             ],
             child: MaterialApp(
