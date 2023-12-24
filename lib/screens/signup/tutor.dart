@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:speakup/models/user.dart';
+import 'package:speakup/provider/user_provider.dart';
 import 'package:speakup/screens/home/conversation.dart';
-import 'package:speakup/screens/signup/language.dart'
-    show selectedLanguage, selectedLangLevel;
+import 'package:speakup/screens/signup/native_language.dart'
+    show selectedNativeLanguage;
+import 'package:speakup/screens/signup/target_language.dart'
+    show selectedTargetLanguage, selectedLangLevel;
 import 'package:speakup/screens/signup/names.dart'
     show
         emailTextController,
@@ -204,12 +208,21 @@ class _TutorScreenState extends State<TutorScreen> {
                           lastName: lastNameTextController.text,
                           email: emailTextController.text,
                           phoneNumber: phoneNumTextController.text,
-                          targetLanguage: selectedLanguage ?? "",
-                          nativeLanguage: " ",
+                          targetLanguage: selectedTargetLanguage ?? "",
+                          targetLangLevel: selectedLangLevel ?? "",
+                          nativeLanguage: selectedNativeLanguage ?? " ",
                           profilePictureUrl: picUrl ?? "",
                           tutorGender: selectedTutor ?? "");
                       await FirebaseCloud()
                           .updateUserData(user.toSpeakupUserMap());
+                      SpeakupUser? firebaseUser =
+                          await FirebaseCloud().getCurrentUser();
+                      print(firebaseUser?.profilePictureUrl ??
+                          "no firebaseUser img");
+                      if (firebaseUser != null) {
+                        Provider.of<UserInfoProvider>(context, listen: false)
+                            .setUser(user);
+                      }
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const ConversationScreen(),
                       ));

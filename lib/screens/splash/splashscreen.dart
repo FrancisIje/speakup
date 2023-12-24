@@ -23,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     var user = FirebaseAuthProvider().currentUser;
 
     return FlutterSplashScreen.fadeIn(
+      duration: Duration(seconds: 5),
       backgroundColor: const Color(0xFF440d56),
       onInit: () async {
         debugPrint("On Init");

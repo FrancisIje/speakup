@@ -18,11 +18,9 @@ final ThemeData appThemeData = ThemeData(
       )),
   scaffoldBackgroundColor: const Color(0xFFE7E3FF),
   listTileTheme: ListTileThemeData(
-    shape: RoundedRectangleBorder(
-        side: const BorderSide(color: Color(0xFF222222)),
-        borderRadius: BorderRadius.all(Radius.circular(13.r))),
+    shape: null,
     selectedColor: Colors.white,
-    textColor: Colors.white,
+    textColor: Colors.black,
     selectedTileColor: const Color(0xFF222222),
   ),
   textTheme: const TextTheme(

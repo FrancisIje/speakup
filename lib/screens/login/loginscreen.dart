@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:speakup/models/user.dart';
+import 'package:speakup/provider/user_provider.dart';
 import 'package:speakup/screens/get_started/getstarted.dart';
 import 'package:speakup/screens/home/conversation.dart';
 import 'package:speakup/services/auth/auth_service.dart';
+import 'package:speakup/services/cloud/firebase_cloud.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
@@ -135,19 +139,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 14.h,
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           print('logged in');
 
-                          AuthService.firebase()
-                              .logIn(
-                                  email: emailTextController.text,
-                                  password: passwordTextController.text)
-                              .then((value) =>
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ConversationScreen(),
-                                  )));
+                          await AuthService.firebase().logIn(
+                              email: emailTextController.text,
+                              password: passwordTextController.text);
+
+                          SpeakupUser? user =
+                              await FirebaseCloud().getCurrentUser();
+                          print(user?.profilePictureUrl ?? "no user img");
+                          if (user != null) {
+                            Provider.of<UserInfoProvider>(context,
+                                    listen: false)
+                                .setUser(user);
+                          }
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ConversationScreen(),
+                          ));
                         }
                       },
                       style: ButtonStyle(

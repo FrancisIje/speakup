@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:speakup/screens/signup/language.dart';
+import 'package:speakup/screens/signup/target_language.dart';
 import 'package:speakup/services/auth/auth_service.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
@@ -195,7 +195,8 @@ class _ProfilePicScreenState extends State<ProfilePicScreen> {
                             // Navigator.pushNamed(context,
                             //     AppRouteConstants.verifybuilderRouteName);
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => LanguageScreen(),
+                              builder: (context) =>
+                                  const TargetLanguageScreen(),
                             ));
                           } catch (e) {
                             SnackBar(content: Text("Error, try again"));
