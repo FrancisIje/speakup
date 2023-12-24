@@ -1,16 +1,75 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+
+import 'package:speakup/provider/tooltip_provider.dart';
 import 'package:speakup/provider/widget_switch.dart';
+
 import 'package:speakup/services/gpt/gpt.dart';
 import 'package:speakup/utils/responsive.dart';
 
-class ReceivedMsg extends StatelessWidget {
+class ReceivedMsg extends StatefulWidget {
   final String msg;
-  const ReceivedMsg({super.key, required this.msg});
+
+  ReceivedMsg({Key? key, required this.msg});
 
   @override
+  State<ReceivedMsg> createState() => _ReceivedMsgState();
+}
+
+OverlayEntry? currentTooltipOverlay;
+
+class _ReceivedMsgState extends State<ReceivedMsg> {
+  @override
   Widget build(BuildContext context) {
+    List<String> words = widget.msg.split(' ');
+
+    void showTooltip(
+        BuildContext context, String word, TapDownDetails details) {
+      TooltipProvider tooltipProvider =
+          Provider.of<TooltipProvider>(context, listen: false);
+
+      if (!tooltipProvider.isTooltipVisible) {
+        tooltipProvider.showTooltip(context, word, details);
+      }
+    }
+
+    void hideTooltip(BuildContext context) {
+      TooltipProvider tooltipProvider =
+          Provider.of<TooltipProvider>(context, listen: false);
+
+      if (tooltipProvider.isTooltipVisible) {
+        tooltipProvider.hideTooltip(context);
+      }
+    }
+
+    List<TextSpan> buildTextSpans(List<String> words) {
+      List<TextSpan> textSpans = [];
+
+      for (String word in words) {
+        textSpans.add(
+          TextSpan(
+            text: " $word ",
+            style: const TextStyle(
+              fontSize: 18.0,
+              color: Colors.black,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTapDown = (details) {
+                hideTooltip(context);
+                showTooltip(context, word, details);
+              }
+              ..onTapCancel = () {
+                hideTooltip(context);
+              },
+          ),
+        );
+      }
+
+      return textSpans;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.h),
       child: Row(
@@ -23,7 +82,7 @@ class ReceivedMsg extends StatelessWidget {
                 builder: (context, value, child) => value.isFirstWidgetSelected
                     ? IconButton(
                         onPressed: () {
-                          ChatGPTApi(context).fetchSpeech(msg);
+                          ChatGPTApi(context).fetchSpeech(widget.msg);
                           Provider.of<ToggleProvider>(context, listen: false)
                               .toggleSelection();
                         },
@@ -38,7 +97,7 @@ class ReceivedMsg extends StatelessWidget {
               ),
               IconButton(
                   onPressed: () {
-                    ChatGPTApi(context).fetchSpeech(msg);
+                    ChatGPTApi(context).fetchSpeech(widget.msg);
                   },
                   icon: const Icon(
                     Icons.refresh,
@@ -65,11 +124,11 @@ class ReceivedMsg extends StatelessWidget {
                   constraints:
                       BoxConstraints(maxWidth: appWidth(context) * 0.6),
                   padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
-                  // height: 120.h,
                   color: Colors.white,
-                  child: Text(
-                    msg,
-                    softWrap: true,
+                  child: RichText(
+                    text: TextSpan(
+                      children: buildTextSpans(words),
+                    ),
                   ),
                 ),
               ),

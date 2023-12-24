@@ -7,7 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:record_mp3/record_mp3.dart';
+import 'package:speakup/provider/chat_message.dart';
+import 'package:speakup/provider/conversation_state_provider.dart';
+import 'package:speakup/provider/tooltip_provider.dart';
+import 'package:speakup/provider/user_provider.dart';
+import 'package:speakup/provider/vtt_filepath.dart';
 // import 'package:record/record.dart';
 import 'package:speakup/screens/home/widget/chat_message.dart';
 
@@ -24,6 +30,8 @@ class _ChatWidgetState extends State<ChatWidget> {
   // final ScrollController scrollController = ScrollController();
   // final record = AudioRecorder();
   // final recorder = FlutterSoundRecorder();
+
+  // late ConversationStateProvider conversationState;
   String statusText = "";
   bool isComplete = false;
   String recordFilePath = "";
@@ -33,8 +41,72 @@ class _ChatWidgetState extends State<ChatWidget> {
   String? path;
   final TextEditingController _messagesController = TextEditingController();
 
-  List<ChatMessage> _messages = [];
   late final ChatGPTApi _chatGPTApi;
+
+  Future<String> generateAndSaveVttFile(
+      String text, BuildContext context) async {
+    String vttContent = await generateVttContent(text);
+
+    // Specify the file path
+    String fileName = 'subtitles.vtt';
+
+    // Get the documents directory using path_provider package
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${documentsDirectory.path}/$fileName';
+
+    // Create the directories if they don't exist
+    if (!await Directory('${documentsDirectory.path}/path/to/your/file/')
+        .exists()) {
+      await Directory('${documentsDirectory.path}/path/to/your/file/')
+          .create(recursive: true);
+    }
+
+    // Save the VTT content to a file
+    File file = File(filePath);
+    file.writeAsStringSync(vttContent);
+
+    print('VTT content has been saved to $filePath');
+    Provider.of<VttFilePathProvider>(context, listen: false)
+        .setFilePath(filePath);
+    return filePath;
+  }
+
+  Future<String> generateVttContent(String text) async {
+    StringBuffer vttContent = StringBuffer();
+
+    // Add the VTT header
+    vttContent.writeln("WEBVTT");
+    vttContent.writeln();
+
+    // Split the text into lines and generate VTT cues
+    List<String> lines = text.split('\n');
+    int cueIndex = 1;
+    for (String line in lines) {
+      if (line.trim().isNotEmpty) {
+        // Generate VTT cue
+        vttContent.writeln("$cueIndex");
+        vttContent.writeln(formatTime(0) +
+            " --> " +
+            formatTime(5)); // Replace with the desired time range
+        vttContent.writeln(line);
+        vttContent.writeln();
+
+        cueIndex++;
+      }
+    }
+
+    return vttContent.toString();
+  }
+
+  String formatTime(int seconds) {
+    // Format seconds into HH:MM:SS.mmm
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60;
+    int remainingSeconds = seconds % 60;
+    String formattedTime =
+        '$hours:${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}.000';
+    return formattedTime;
+  }
 
   Future<bool> checkPermission() async {
     if (!await Permission.microphone.isGranted) {
@@ -86,24 +158,11 @@ class _ChatWidgetState extends State<ChatWidget> {
     }
   }
 
-  // Future stop() async {
-
-  // }
-
-  // Future initRecorder() async {
-  //   final status = await Permission.microphone.request();
-
-  //   if (status != PermissionStatus.granted) {
-  //     throw "Microphone permission not granted";
-  //   }
-  //   await recorder.openRecorder();
-  //   isRecorderReady = true;
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
     _chatGPTApi = ChatGPTApi(context);
+
     // initRecorder();
     super.initState();
   }
@@ -115,32 +174,6 @@ class _ChatWidgetState extends State<ChatWidget> {
     super.dispose();
   }
 
-  void _handleSubmitted(String text) async {
-    print("submitted");
-    _messagesController.clear();
-    ChatMessage message = ChatMessage(
-      text: text,
-      role: "user",
-    );
-    setState(() {
-      _messages.insert(0, message);
-    });
-    print("tapped");
-    try {
-      String response = await _chatGPTApi.getChatCompletion(text);
-      print(response);
-      ChatMessage reply = ChatMessage(
-        text: response,
-        role: "assistant",
-      );
-      setState(() {
-        _messages.insert(0, reply);
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -149,11 +182,85 @@ class _ChatWidgetState extends State<ChatWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollController.jumpTo(scrollController.position.maxScrollExtent);
     });
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final userSpeakUpInfo = Provider.of<UserInfoProvider>(context).user;
+    void handleSubmitted(
+        {required String text,
+        required bool isRolePlay,
+        required bool isParagraph,
+        required bool isFree}) async {
+      print("submitted");
+
+      ChatMessage message = ChatMessage(
+        text: text,
+        role: "user",
+      );
+
+      Provider.of<ChatMessageProvider>(context, listen: false)
+          .insertMessage(message);
+
+      String response;
+      // setState(() {
+      //   _messages.insert(0, message);
+      // });
+      print("tapped");
+      try {
+        if (isRolePlay) {
+          response = await ChatGPTApi(context).startRolePlay(
+              text,
+              userSpeakUpInfo?.targetLanguage ?? "English",
+              userSpeakUpInfo?.targetLangLevel ?? "A1");
+        } else if (isParagraph) {
+          response = await ChatGPTApi(context).startParagraph(
+              text,
+              userSpeakUpInfo?.targetLanguage ?? "English",
+              userSpeakUpInfo?.targetLangLevel ?? "A1");
+        } else if (isFree) {
+          response = await _chatGPTApi.getChatCompletion(
+            question: text,
+            learnLang: userSpeakUpInfo?.targetLanguage ?? "English",
+          );
+        } else {
+          response = await _chatGPTApi.getChatCompletion(
+            question: text,
+            learnLang: userSpeakUpInfo?.targetLanguage ?? "English",
+          );
+        }
+
+        print(response);
+        // generateAndSaveVttFile(response, context);
+
+        print(response);
+        ChatMessage reply = ChatMessage(
+          text: response,
+          role: "assistant",
+        );
+        Provider.of<ChatMessageProvider>(context, listen: false)
+            .insertMessage(reply);
+        // setState(() {
+        //   _messages.insert(0, reply);
+        // });
+      } catch (e) {
+        print("Error: $e");
+      }
+    }
+
+    final conversationState = Provider.of<ConversationStateProvider>(context);
+    if (Provider.of<ChatMessageProvider>(context, listen: true)
+        .messages
+        .isEmpty) {
+      handleSubmitted(
+          text: "Let's start",
+          isRolePlay: conversationState.isRolePlay,
+          isParagraph: conversationState.isParagraph,
+          isFree: conversationState.isFree);
+    }
+    final conversationSate = Provider.of<ConversationStateProvider>(context);
     return Expanded(
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -179,6 +286,9 @@ class _ChatWidgetState extends State<ChatWidget> {
                             child: GestureDetector(
                                 onTap: () async {
                                   setState(() {
+                                    Provider.of<TooltipProvider>(context,
+                                            listen: false)
+                                        .hideTooltip(context);
                                     isRecording = true;
                                   });
                                   startRecord();
@@ -192,7 +302,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                   //           encoder: AudioEncoder.pcm16bits));
                                   // }
 
-// Stop recording...
+                                  // Stop recording...
 
                                   // record.dispose();
                                 },
@@ -203,6 +313,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                             padding: const EdgeInsets.symmetric(vertical: 3),
                             height: 60.h,
                             child: TextField(
+                              onTap: () {
+                                Provider.of<TooltipProvider>(context,
+                                        listen: false)
+                                    .hideTooltip(context);
+                              },
                               controller: _messagesController,
                               cursorColor: Colors.white,
                               decoration: InputDecoration(
@@ -224,9 +339,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                               scrollController.position.maxScrollExtent);
                         });
                         // _sendMessage(_messagesController.text);
-                        _handleSubmitted(
-                          _messagesController.text,
-                        );
+                        handleSubmitted(
+                            text: _messagesController.text,
+                            isFree: conversationSate.isFree,
+                            isParagraph: conversationSate.isParagraph,
+                            isRolePlay: conversationSate.isRolePlay);
                         _messagesController.clear();
                       }
                     },
@@ -268,12 +385,16 @@ class _ChatWidgetState extends State<ChatWidget> {
                         transcribedText == null
                             ? const SnackBar(
                                 content: Text("Record audio again"))
-                            : _handleSubmitted(transcribedText);
+                            : handleSubmitted(
+                                text: transcribedText,
+                                isFree: conversationSate.isFree,
+                                isParagraph: conversationSate.isParagraph,
+                                isRolePlay: conversationSate.isRolePlay);
                       },
                       child: Container(
                         height: 40.h,
                         color: const Color.fromRGBO(255, 255, 255, 1),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.stop),
@@ -286,24 +407,31 @@ class _ChatWidgetState extends State<ChatWidget> {
             ],
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  reverse: true,
-                  controller: scrollController,
-                  itemBuilder: (_, int index) => _messages[index],
-                  itemCount: _messages.length,
+        body: GestureDetector(
+          onTap: () {
+            Provider.of<TooltipProvider>(context, listen: false)
+                .hideTooltip(context);
+          },
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Consumer<ChatMessageProvider>(
+                builder: (ctx, value, child) => Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        reverse: true,
+                        controller: scrollController,
+                        itemBuilder: (_, int index) => value.messages[index],
+                        itemCount: value.messages.length,
+                      ),
+                    ),
+                    Divider(height: 1.0),
+                    SizedBox(
+                      height: 80.h,
+                    ),
+                  ],
                 ),
-              ),
-              Divider(height: 1.0),
-              SizedBox(
-                height: 80.h,
-              ),
-            ],
-          ),
+              )),
         ),
       ),
     );
