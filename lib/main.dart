@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:speakup/firebase_options.dart';
 import 'package:speakup/provider/chat_message.dart';
 import 'package:speakup/provider/conversation_state_provider.dart';
+import 'package:speakup/provider/is_chat_hidden.dart';
 import 'package:speakup/provider/is_talking.dart';
 import 'package:speakup/provider/text_word_switch.dart';
 import 'package:speakup/provider/tooltip_provider.dart';
@@ -69,6 +70,9 @@ class SpeakUpApp extends StatelessWidget {
               ),
               ChangeNotifierProvider<VideoState>(
                 create: (context) => VideoState(),
+              ),
+              ChangeNotifierProvider<IsChatVisibleProvider>(
+                create: (context) => IsChatVisibleProvider(),
               ),
             ],
             child: MaterialApp(
