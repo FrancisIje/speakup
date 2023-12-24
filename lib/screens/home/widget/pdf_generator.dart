@@ -43,16 +43,6 @@ class PdfGenerator {
     savePdf(pdfBytes);
   }
 
-  // Future<void> savePdf(Uint8List pdfBytes) async {
-  //   if (await Permission.storage.request().isGranted) {
-  //     final downloadsDirectory = await getTemporaryDirectory();
-  //     print(downloadsDirectory.path);
-  //     final file = File('${downloadsDirectory.path}/chat_history.pdf');
-
-  //     await file.writeAsBytes(pdfBytes);
-  //   }
-  // }
-
   Future<void> savePdf(Uint8List pdfBytes) async {
     if (await Permission.storage.request().isGranted) {
       await getApplicationDocumentsDirectory();
