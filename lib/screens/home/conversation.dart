@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:speakup/models/user.dart';
 import 'package:speakup/provider/chat_message.dart';
 import 'package:speakup/provider/conversation_state_provider.dart';
+import 'package:speakup/provider/is_chat_hidden.dart';
 import 'package:speakup/provider/is_talking.dart';
 import 'package:speakup/provider/user_provider.dart';
 
 import 'package:speakup/screens/home/widget/chat.dart';
 import 'package:speakup/screens/home/widget/chat_message.dart';
+import 'package:speakup/screens/home/widget/pdf_generator.dart';
 import 'package:speakup/screens/home/widget/video_player.dart';
 import 'package:speakup/screens/settings/settings.dart';
 import 'package:speakup/services/cloud/firebase_cloud.dart';
@@ -125,6 +127,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     final userSpeakUpInfo = Provider.of<UserInfoProvider>(context).user;
     final conversationProvider =
         Provider.of<ConversationStateProvider>(context, listen: false);
+    var msgToSave = Provider.of<ChatMessageProvider>(context).messages;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -233,9 +236,16 @@ class _ConversationScreenState extends State<ConversationScreen>
             icon: const Icon(Icons.more_horiz)),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.closed_caption_off)),
+              onPressed: () {
+                Provider.of<IsChatVisibleProvider>(context, listen: false)
+                    .toggleChatVisibility();
+              },
+              icon: const Icon(Icons.closed_caption_off)),
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.download_rounded)),
+              onPressed: () {
+                PdfGenerator().generateChatPdf(msgToSave);
+              },
+              icon: const Icon(Icons.download_rounded)),
         ],
         titleTextStyle: TextStyle(
             fontSize: 20.sp, fontWeight: FontWeight.w700, color: Colors.black),
