@@ -13,4 +13,8 @@ class AppRouteConstants {
   static const splashscreenRouteName = "/splash";
   static const definitionScreenRouteName = "/definition";
   static const passwordScreenRouteName = "/password";
+  static const personalDetailsRouteName = "/personal-details";
+  static const speechControllerRouteName = "/speech-control";
+  static const reviewRouteName = "/review";
+  static const termsRouteName = "/toc";
 }
