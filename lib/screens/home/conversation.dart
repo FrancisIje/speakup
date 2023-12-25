@@ -132,7 +132,6 @@ class _ConversationScreenState extends State<ConversationScreen>
     _fadeOutController.dispose();
     emailTextController.dispose();
     passwordTextController.dispose();
-
     super.dispose();
   }
 
