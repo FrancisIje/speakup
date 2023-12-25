@@ -1,15 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/services/auth/firebase_auth_provider.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
 
-final emailTextController = TextEditingController();
-final firstNameTextController = TextEditingController();
-final lastNameTextController = TextEditingController();
-final phoneNumTextController = TextEditingController();
+late TextEditingController emailTextController;
+late TextEditingController firstNameTextController;
+late TextEditingController lastNameTextController;
+late TextEditingController phoneNumTextController;
 
 class SignUp1Screen extends StatefulWidget {
   const SignUp1Screen({super.key});
@@ -33,6 +31,26 @@ class _SignUp1ScreenState extends State<SignUp1Screen> {
   void navToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
         AppRouteConstants.homeRouteName, (route) => false);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    emailTextController = TextEditingController();
+    firstNameTextController = TextEditingController();
+    lastNameTextController = TextEditingController();
+    phoneNumTextController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailTextController.dispose();
+    firstNameTextController.dispose();
+    lastNameTextController.dispose();
+    phoneNumTextController.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
