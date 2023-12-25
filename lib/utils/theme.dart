@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final ThemeData appThemeData = ThemeData(
+  appBarTheme: const AppBarTheme(
+    color: Color(0xFFE7E3FF),
+  ),
   useMaterial3: true,
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: Color(0x52808080),
