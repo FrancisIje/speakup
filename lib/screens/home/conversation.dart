@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+
 import 'package:speakup/models/user.dart';
 import 'package:speakup/provider/chat_message.dart';
 import 'package:speakup/provider/conversation_state_provider.dart';
 import 'package:speakup/provider/is_chat_hidden.dart';
 import 'package:speakup/provider/is_talking.dart';
+
 import 'package:speakup/provider/user_provider.dart';
 
 import 'package:speakup/screens/home/widget/chat.dart';
@@ -19,6 +23,8 @@ import 'package:speakup/services/gpt/gpt.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';
+import 'package:timer_count_down/timer_controller.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({super.key});
@@ -38,6 +44,18 @@ class _ConversationScreenState extends State<ConversationScreen>
   late TextEditingController passwordTextController;
   late AnimationController _fadeInController;
   late AnimationController _fadeOutController;
+  final CountdownController _countdownController =
+      CountdownController(autoStart: true);
+
+  String formatDuration(double seconds) {
+    int totalSeconds = seconds.floor();
+    int minutes = (totalSeconds / 60).floor();
+    int remainingSeconds = totalSeconds % 60;
+
+    String formattedTime =
+        '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+    return formattedTime;
+  }
 
   Future<void> getUser() async {
     SpeakupUser? user = await FirebaseCloud().getCurrentUser();
@@ -96,6 +114,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     _chatGPTApi = ChatGPTApi(context);
     emailTextController = TextEditingController();
     passwordTextController = TextEditingController();
+    _countdownController.onStart;
 
     _fadeInController = AnimationController(
       vsync: this,
@@ -113,6 +132,7 @@ class _ConversationScreenState extends State<ConversationScreen>
     _fadeOutController.dispose();
     emailTextController.dispose();
     passwordTextController.dispose();
+
     super.dispose();
   }
 
@@ -356,6 +376,24 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 ),
                               ),
                             ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 12.h, horizontal: 14.w),
+                                child: Countdown(
+                                  controller: _countdownController,
+                                  seconds: 48000,
+                                  build: (BuildContext context, double time) {
+                                    return Text(formatDuration(time));
+                                  },
+                                  interval: Duration(seconds: 1),
+                                  onFinished: () {
+                                    print('Timer is done!');
+                                  },
+                                ),
+                              ),
+                            )
                           ],
                         );
                 },
