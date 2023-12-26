@@ -13,7 +13,6 @@ class SpeechControllerPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: const Text(
           'SPEECH CONTROLLER',
           style: TextStyle(fontWeight: FontWeight.bold),

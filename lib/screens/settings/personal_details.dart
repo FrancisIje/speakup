@@ -13,7 +13,6 @@ class PersonalDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: const Text(
           'PERSONAL DETAILS',
           style: TextStyle(fontWeight: FontWeight.bold),

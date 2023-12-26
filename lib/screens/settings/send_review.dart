@@ -20,7 +20,6 @@ class _ReviewPageState extends State<ReviewPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: const Text(
           'SEND REVIEW',
           style: TextStyle(fontWeight: FontWeight.bold),

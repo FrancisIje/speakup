@@ -37,7 +37,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
         title: const Text(
           'DELETE ACCOUNT',
           style: TextStyle(fontWeight: FontWeight.bold),
