@@ -159,7 +159,7 @@ class SettingsPage extends StatelessWidget {
             leading: const ImageIcon(AssetImage("images/support_icon.png")),
             title: const Text('Terms & Conditions'),
             onTap: () {
-              // Handle onTap for Item 6
+              Navigator.of(context).pushNamed(AppRouteConstants.termsRouteName);
             },
           ),
           ListTile(
@@ -167,7 +167,8 @@ class SettingsPage extends StatelessWidget {
             leading: const ImageIcon(AssetImage("images/contact_us_icon.png")),
             title: const Text('Contact Us'),
             onTap: () {
-              // Handle onTap for Item 7
+              Navigator.of(context)
+                  .pushNamed(AppRouteConstants.contactUsRouteName);
             },
           ),
           ListTile(
@@ -175,7 +176,7 @@ class SettingsPage extends StatelessWidget {
             leading: const ImageIcon(AssetImage("images/faq_icon.png")),
             title: const Text('FAQ'),
             onTap: () {
-              // Handle onTap for Item 8
+              Navigator.of(context).pushNamed(AppRouteConstants.faqRouteName);
             },
           ),
           ListTile(
