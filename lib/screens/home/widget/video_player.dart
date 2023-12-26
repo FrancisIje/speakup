@@ -15,7 +15,7 @@ class VideoWidget extends StatefulWidget {
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   // Future<ClosedCaptionFile> _loadCaptions() async {
   //   final String fileContents = await DefaultAssetBundle.of(context)
   //       .loadString(
@@ -47,18 +47,18 @@ class _VideoWidgetState extends State<VideoWidget> {
       //     widget.closedCaptionPath == null ? null : _loadCaptions()
     );
 
-    _controller.addListener(() {
+    _controller!.addListener(() {
       // setState(() {});
     });
-    _controller.setLooping(true);
-    _controller.initialize();
+    _controller!.setLooping(true);
+    _controller!.initialize();
     // .then((_) => setState(() {}));
-    _controller.play();
+    _controller!.play();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -67,12 +67,15 @@ class _VideoWidgetState extends State<VideoWidget> {
     return SingleChildScrollView(
       child: AspectRatio(
         aspectRatio: 1.7,
+
         // aspectRatio: _controller.value.aspectRatio,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
-            VideoPlayer(_controller),
-            _ControlsOverlay(controller: _controller),
+            _controller == null
+                ? Image.asset("images/womanpurple.png")
+                : VideoPlayer(_controller!),
+            // _ControlsOverlay(controller: _controller),
             // VideoProgressIndicator(_controller, allowScrubbing: true),
           ],
         ),

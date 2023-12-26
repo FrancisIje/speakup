@@ -274,129 +274,117 @@ class _ConversationScreenState extends State<ConversationScreen>
         padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: Column(
           children: [
-            AnimatedSwitcher(
-              switchInCurve: Curves.easeIn,
-              switchOutCurve: Curves.easeOut,
-              duration: Duration(seconds: 5),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset(0.0, 0.0);
-                var tween = Tween(begin: begin, end: end)
-                    .chain(CurveTween(curve: Curves.easeInOut));
-                var offsetAnimation = animation.drive(tween);
-                return SlideTransition(position: offsetAnimation, child: child);
-              },
-              child: Consumer<Talking>(
-                builder: (context, value, child) {
-                  return value.isTalking
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                          child: SizedBox(
-                            width: appWidth(context),
-                            key: ValueKey("speaking_woman_key"),
-                            child: VideoWidget(
-                              videoPath: "videos/speaking_woman.mp4",
+            Consumer<Talking>(
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    value.isTalking
+                        ? ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.r)),
+                            child: SizedBox(
+                              width: appWidth(context),
+                              key: ValueKey("speaking_woman_key"),
+                              child: VideoWidget(
+                                videoPath: "videos/speaking_woman.mp4",
+                              ),
+                            ),
+                          )
+                        : ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.r)),
+                            child: SizedBox(
+                              width: appWidth(context),
+                              key: ValueKey("listening_woman_key"),
+                              child: VideoWidget(
+                                videoPath: "videos/listening_woman.mp4",
+                              ),
                             ),
                           ),
-                        )
-                      : Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.r)),
-                              child: SizedBox(
-                                width: appWidth(context),
-                                key: ValueKey("listening_woman_key"),
-                                child: VideoWidget(
-                                  videoPath: "videos/listening_woman.mp4",
-                                ),
-                              ),
+
+                    ////////////////
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: PopupMenuButton<String>(
+                        initialValue: topicValue,
+                        tooltip: 'Topic',
+                        onSelected: (String value) {
+                          setState(() {
+                            topicValue = value;
+                          });
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return <PopupMenuItem<String>>[
+                            PopupMenuItem<String>(
+                              onTap: () {
+                                conversationProvider.isRolePlay = true;
+                                Provider.of<ChatMessageProvider>(context,
+                                        listen: false)
+                                    .resetMessage();
+                              },
+                              value: "Roleplay",
+                              child: Text('Roleplay'),
                             ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: PopupMenuButton<String>(
-                                initialValue: topicValue,
-                                tooltip: 'Topic',
-                                onSelected: (String value) {
-                                  setState(() {
-                                    topicValue = value;
-                                  });
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return <PopupMenuItem<String>>[
-                                    PopupMenuItem<String>(
-                                      onTap: () {
-                                        conversationProvider.isRolePlay = true;
-                                        Provider.of<ChatMessageProvider>(
-                                                context,
-                                                listen: false)
-                                            .resetMessage();
-                                      },
-                                      value: "Roleplay",
-                                      child: Text('Roleplay'),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      onTap: () {
-                                        conversationProvider.isParagraph = true;
-                                        Provider.of<ChatMessageProvider>(
-                                                context,
-                                                listen: false)
-                                            .resetMessage();
-                                      },
-                                      value: "Paragraph",
-                                      child: Text('Paragraph'),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      onTap: () {
-                                        conversationProvider.isFree = true;
-                                        Provider.of<ChatMessageProvider>(
-                                                context,
-                                                listen: false)
-                                            .resetMessage();
-                                      },
-                                      value: "Free",
-                                      child: Text('Free'),
-                                    ),
-                                  ];
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 16,
-                                  ),
-                                  child: Text(
-                                    topicValue ?? "Topic",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            PopupMenuItem<String>(
+                              onTap: () {
+                                conversationProvider.isParagraph = true;
+                                Provider.of<ChatMessageProvider>(context,
+                                        listen: false)
+                                    .resetMessage();
+                              },
+                              value: "Paragraph",
+                              child: Text('Paragraph'),
                             ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 12.h, horizontal: 14.w),
-                                child: Countdown(
-                                  controller: _countdownController,
-                                  seconds: 48000,
-                                  build: (BuildContext context, double time) {
-                                    return Text(formatDuration(time));
-                                  },
-                                  interval: Duration(seconds: 1),
-                                  onFinished: () {
-                                    print('Timer is done!');
-                                  },
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                },
-              ),
+                            PopupMenuItem<String>(
+                              onTap: () {
+                                conversationProvider.isFree = true;
+                                Provider.of<ChatMessageProvider>(context,
+                                        listen: false)
+                                    .resetMessage();
+                              },
+                              value: "Free",
+                              child: Text('Free'),
+                            ),
+                          ];
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          child: Text(
+                            topicValue ?? "Topic",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.h, horizontal: 14.w),
+                        child: Countdown(
+                          controller: _countdownController,
+                          seconds: 48000,
+                          build: (BuildContext context, double time) {
+                            return Text(formatDuration(time));
+                          },
+                          interval: const Duration(seconds: 1),
+                          onFinished: () {
+                            print('Timer is done!');
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
             ),
             const ChatWidget(),
           ],
