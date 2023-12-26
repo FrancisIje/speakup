@@ -16,8 +16,8 @@ class PasswordSetScreen extends StatefulWidget {
 
 bool obsureText = true;
 
-final passwordTextController = TextEditingController();
-final confirmPasswordTextController = TextEditingController();
+late TextEditingController passwordTextController;
+late TextEditingController confirmPasswordTextController;
 
 void runAuth() async {
   try {
@@ -32,6 +32,23 @@ void runAuth() async {
 
 class _PasswordSetScreenState extends State<PasswordSetScreen> {
   final _passwordFormKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    passwordTextController = TextEditingController();
+    confirmPasswordTextController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    passwordTextController.dispose();
+    confirmPasswordTextController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
