@@ -36,8 +36,8 @@ final ThemeData appThemeData = ThemeData(
   ),
   checkboxTheme: CheckboxThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      checkColor: const MaterialStatePropertyAll(Color(0xFFFF8F3E)),
-      fillColor: const MaterialStatePropertyAll(Color(0xFF52FF8B57))),
+      checkColor: const MaterialStatePropertyAll(Colors.transparent),
+      fillColor: const MaterialStatePropertyAll(Colors.transparent)),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       foregroundColor: MaterialStateProperty.all(const Color(0xFFFF8F3E)),
