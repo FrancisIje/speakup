@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speakup/models/user.dart';
-import 'package:speakup/provider/user_provider.dart';
+
 import 'package:speakup/screens/home/conversation.dart';
 import 'package:speakup/screens/signup/native_language.dart'
     show selectedNativeLanguage;
@@ -220,12 +223,16 @@ class _TutorScreenState extends State<TutorScreen> {
                       print(firebaseUser?.profilePictureUrl ??
                           "no firebaseUser img");
                       if (firebaseUser != null) {
-                        Provider.of<UserInfoProvider>(context, listen: false)
-                            .setUser(user);
+                        // Storing object
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.setString('userDetails',
+                            json.encode(firebaseUser.toSpeakupUserMap()));
+
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ConversationScreen(),
+                        ));
                       }
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ConversationScreen(),
-                      ));
                     } catch (e) {
                       print(e);
                     }

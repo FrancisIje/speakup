@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speakup/models/user.dart';
-import 'package:speakup/provider/user_provider.dart';
+
 import 'package:speakup/screens/get_started/getstarted.dart';
 import 'package:speakup/screens/home/conversation.dart';
 import 'package:speakup/services/auth/auth_service.dart';
@@ -18,9 +21,17 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+late TextEditingController emailTextController;
+late TextEditingController passwordTextController;
+
 class _LoginScreenState extends State<LoginScreen> {
-  final emailTextController = TextEditingController();
-  final passwordTextController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    emailTextController = TextEditingController();
+    passwordTextController = TextEditingController();
+  }
 
   final formKey = GlobalKey<FormState>();
 
@@ -28,6 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void navToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
         AppRouteConstants.homeRouteName, (route) => false);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailTextController.dispose();
+    passwordTextController.dispose();
   }
 
   @override
@@ -147,18 +166,21 @@ class _LoginScreenState extends State<LoginScreen> {
                               email: emailTextController.text,
                               password: passwordTextController.text);
 
-                          SpeakupUser? user =
+                          SpeakupUser? firebaseUser =
                               await FirebaseCloud().getCurrentUser();
-                          print(user?.profilePictureUrl ?? "no user img");
-                          if (user != null) {
-                            Provider.of<UserInfoProvider>(context,
-                                    listen: false)
-                                .setUser(user);
-                          }
+                          print(firebaseUser?.profilePictureUrl ??
+                              "no firebaseUser img");
+                          if (firebaseUser != null) {
+                            // Storing object
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setString('userDetails',
+                                json.encode(firebaseUser.toSpeakupUserMap()));
 
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const ConversationScreen(),
-                          ));
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const ConversationScreen(),
+                            ));
+                          }
                         }
                       },
                       style: ButtonStyle(
