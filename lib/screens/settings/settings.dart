@@ -100,7 +100,8 @@ class SettingsPage extends StatelessWidget {
                 AssetImage("images/speech_controller_icon.png")),
             title: const Text('Send Review'),
             onTap: () {
-              // Handle onTap for Item 3
+              Navigator.of(context)
+                  .pushNamed(AppRouteConstants.reviewRouteName);
             },
           ),
           ListTile(
@@ -108,7 +109,8 @@ class SettingsPage extends StatelessWidget {
             leading: const ImageIcon(AssetImage("images/delete_icon.png")),
             title: const Text('Delete Account'),
             onTap: () {
-              // Handle onTap for Item 4
+              Navigator.of(context)
+                  .pushNamed(AppRouteConstants.deleteaccountRouteName);
             },
           ),
           const Divider(),
@@ -134,7 +136,8 @@ class SettingsPage extends StatelessWidget {
             leading: const ImageIcon(AssetImage("images/unsubscribe_icon.png")),
             title: const Text('Subscription Plans'),
             onTap: () {
-              // Handle onTap for Item 5
+              Navigator.of(context)
+                  .pushNamed(AppRouteConstants.subscriptionRouteName);
             },
           ),
           const Divider(),

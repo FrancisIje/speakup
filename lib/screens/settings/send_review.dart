@@ -19,6 +19,7 @@ class _ReviewPageState extends State<ReviewPage> {
     // final userDetails = Provider.of<UserInfoProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text(
           'SEND REVIEW',
