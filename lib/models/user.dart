@@ -7,7 +7,8 @@ class SpeakupUser {
   String targetLangLevel;
   String nativeLanguage;
   String tutorGender;
-  String profilePictureUrl; // Firebase Storage URL
+  String profilePictureUrl;
+  List<String>? vocWords;
 
   SpeakupUser(
       {required this.firstName,
@@ -18,7 +19,8 @@ class SpeakupUser {
       required this.targetLangLevel,
       required this.nativeLanguage,
       required this.profilePictureUrl,
-      required this.tutorGender});
+      required this.tutorGender,
+      this.vocWords});
 
   Map<String, dynamic> toSpeakupUserMap() {
     return {
@@ -31,20 +33,21 @@ class SpeakupUser {
       'nativeLanguage': nativeLanguage,
       'profilePictureUrl': profilePictureUrl,
       'tutorGender': tutorGender,
+      'vocWords': vocWords
     };
   }
 
   static SpeakupUser fromSpeakupUserMap(Map<String, dynamic> map) {
     return SpeakupUser(
-      firstName: map['firstName'],
-      lastName: map['lastName'],
-      email: map['email'],
-      phoneNumber: map['phoneNumber'],
-      targetLanguage: map['targetLanguage'],
-      targetLangLevel: map['targetLangLevel'],
-      nativeLanguage: map['nativeLanguage'],
-      profilePictureUrl: map['profilePictureUrl'],
-      tutorGender: map['tutorGender'],
-    );
+        firstName: map['firstName'],
+        lastName: map['lastName'],
+        email: map['email'],
+        phoneNumber: map['phoneNumber'],
+        targetLanguage: map['targetLanguage'],
+        targetLangLevel: map['targetLangLevel'],
+        nativeLanguage: map['nativeLanguage'],
+        profilePictureUrl: map['profilePictureUrl'],
+        tutorGender: map['tutorGender'],
+        vocWords: map['vocWords']);
   }
 }
