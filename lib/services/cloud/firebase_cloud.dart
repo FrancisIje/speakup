@@ -35,24 +35,23 @@ class FirebaseCloud {
     return SpeakupUser.fromSpeakupUserMap(userData);
   }
 
-  // Future<SpeakupUser> getCurrentUser() async {
-  //   User? currentUser = FirebaseAuth.instance.currentUser;
-  //   DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(currentUser?.uid)
-  //       .get();
-
-  //   return SpeakupUser.fromSpeakupUserMap(
-  //       userSnapshot.data as Map<String, dynamic>);
-  // }
-
   Future<void> updateUserData(Map<String, dynamic> userData) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser?.uid)
-        .set(userData);
-    print('done');
+        .set(
+          userData,
+          SetOptions(merge: true),
+        );
+  }
+
+  Future<void> deleteUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser?.uid)
+        .delete();
   }
 
   static final FirebaseCloud _shared = FirebaseCloud._sharedInstance();
