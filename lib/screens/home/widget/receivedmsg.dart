@@ -1,37 +1,52 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'package:speakup/provider/audio_state_provider.dart';
+import 'package:speakup/provider/text_word_switch.dart';
+
 import 'package:speakup/provider/tooltip_provider.dart';
-import 'package:speakup/provider/widget_switch.dart';
+import 'package:speakup/provider/user_provider.dart';
 
 import 'package:speakup/services/gpt/gpt.dart';
 import 'package:speakup/utils/responsive.dart';
 
 class ReceivedMsg extends StatefulWidget {
   final String msg;
+  final OverlayPortalController tooltipController;
 
-  ReceivedMsg({Key? key, required this.msg});
+  const ReceivedMsg(
+      {Key? key, required this.msg, required this.tooltipController});
 
   @override
   State<ReceivedMsg> createState() => _ReceivedMsgState();
 }
 
-OverlayEntry? currentTooltipOverlay;
-
 class _ReceivedMsgState extends State<ReceivedMsg> {
+  List<String>? wordsToAddList;
+  double dxPosition = 0;
+  double dyPosition = 0;
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserInfoProvider>(context);
     List<String> words = widget.msg.split(' ');
 
     void showTooltip(
         BuildContext context, String word, TapDownDetails details) {
+      Provider.of<TextWordProvider>(context, listen: false)
+          .toggleSelection(isText: true);
       TooltipProvider tooltipProvider =
           Provider.of<TooltipProvider>(context, listen: false);
 
       if (!tooltipProvider.isTooltipVisible) {
-        tooltipProvider.showTooltip(context, word, details);
+        tooltipProvider.showTooltip(
+          context,
+          word,
+          details,
+          user.user!.targetLanguage,
+          user.user!.nativeLanguage,
+        );
       }
     }
 
@@ -44,27 +59,18 @@ class _ReceivedMsgState extends State<ReceivedMsg> {
       }
     }
 
-    List<TextSpan> buildTextSpans(List<String> words) {
-      List<TextSpan> textSpans = [];
+    List<Widget> buildTextSpans(List<String> words) {
+      List<Widget> textSpans = [];
 
       for (String word in words) {
-        textSpans.add(
-          TextSpan(
-            text: " $word ",
-            style: const TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTapDown = (details) {
+        textSpans.add(GestureDetector(
+            onTapDown: (details) {
+              setState(() {
                 hideTooltip(context);
                 showTooltip(context, word, details);
-              }
-              ..onTapCancel = () {
-                hideTooltip(context);
-              },
-          ),
-        );
+              });
+            },
+            child: Text("$word ")));
       }
 
       return textSpans;
@@ -78,31 +84,28 @@ class _ReceivedMsgState extends State<ReceivedMsg> {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Consumer<ToggleProvider>(
-                builder: (context, value, child) => value.isFirstWidgetSelected
+              Consumer<AudioProvider>(
+                builder: (context, value, child) => !value.isTalking
                     ? IconButton(
-                        onPressed: () {
-                          ChatGPTApi(context).fetchSpeech(widget.msg);
-                          Provider.of<ToggleProvider>(context, listen: false)
-                              .toggleSelection();
+                        onPressed: () async {
+                          await ChatGPTApi(context).fetchSpeech(widget.msg);
+                          Provider.of<AudioProvider>(context, listen: false)
+                              .changeTalkingBool(true);
+                          // .toggleSelection(isListen: false);
                         },
                         icon: const Icon(Icons.volume_mute_outlined))
                     : IconButton(
                         onPressed: () {
                           debugPrint("tallkkk");
-                          Provider.of<ToggleProvider>(context, listen: false)
-                              .toggleSelection();
+                          // Provider.of<AudioProvider>(context, listen: false)
+                          //     .changeTalkingBool(false);
+                          // .toggleSelection(isListen: true);
                         },
                         icon: const Icon(Icons.volume_up_outlined)),
               ),
-              IconButton(
-                  onPressed: () {
-                    ChatGPTApi(context).fetchSpeech(widget.msg);
-                  },
-                  icon: const Icon(
-                    Icons.refresh,
-                    color: Color.fromRGBO(104, 73, 255, 1),
-                  )),
+              SizedBox(
+                height: 15.h,
+              ),
               const CircleAvatar(
                 backgroundImage: AssetImage("images/womanpurple.png"),
               ),
@@ -121,16 +124,21 @@ class _ReceivedMsgState extends State<ReceivedMsg> {
                   bottomRight: Radius.circular(10.r),
                 ),
                 child: Container(
-                  constraints:
-                      BoxConstraints(maxWidth: appWidth(context) * 0.6),
-                  padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
-                  color: Colors.white,
-                  child: RichText(
-                    text: TextSpan(
-                      children: buildTextSpans(words),
-                    ),
-                  ),
-                ),
+                    // height: 400.h,
+                    constraints:
+                        BoxConstraints(maxWidth: appWidth(context) * 0.6),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                    color: Colors.white,
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 10,
+                      children: [
+                        ...buildTextSpans(words).map((e) {
+                          return e;
+                        })
+                      ],
+                    )),
               ),
             ],
           ),
