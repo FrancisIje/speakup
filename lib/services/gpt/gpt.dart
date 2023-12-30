@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:audioplayers/audioplayers.dart';
+
 import 'package:provider/provider.dart';
-import 'package:speakup/provider/is_talking.dart';
-import 'package:speakup/provider/widget_switch.dart';
+import 'package:speakup/provider/audio_state_provider.dart';
 
 class ChatGPTApi {
   final String name = "Ainsley";
@@ -42,10 +40,39 @@ class ChatGPTApi {
         ],
       }),
     );
-    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print(jsonDecode(response.body)["choices"][0]["message"]["content"]);
+      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<String> getWordTranslation(
+      {required String word,
+      required String learnLang,
+      required String nativeLang}) async {
+    final response = await http.post(
+      Uri.parse(apiChatUrl),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $openaiApiKey",
+      },
+      body: jsonEncode({
+        "model": "gpt-3.5-turbo",
+        "max_tokens": 500,
+        "messages": [
+          {
+            "role": "system",
+            "content":
+                "Your name is $name. Act as an $learnLang Language tutor. You will translate any word provided from the $learnLang to $nativeLang, your response would be only that word, nothing else "
+          },
+          {"role": "user", "content": word}
+        ],
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
@@ -92,10 +119,8 @@ class ChatGPTApi {
         ],
       }),
     );
-    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print(jsonDecode(response.body)["choices"][0]["message"]["content"]);
       return jsonDecode(response.body)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
@@ -141,10 +166,8 @@ You should not speak any language except $learnLang language during the conversa
         ],
       }),
     );
-    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print(jsonDecode(response.body)["choices"][0]["message"]["content"]);
       return jsonDecode(response.body)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
@@ -171,10 +194,8 @@ You should not speak any language except $learnLang language during the conversa
         ],
       }),
     );
-    print(response.statusCode);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print(jsonDecode(response.body)["choices"][0]["message"]["content"]);
       return jsonDecode(response.body)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
@@ -202,31 +223,31 @@ You should not speak any language except $learnLang language during the conversa
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Request successful
-        print(response.bodyBytes);
 
         // Play the MP3
-        playAudioFile(response.bodyBytes);
+        Provider.of<AudioProvider>(context, listen: false)
+            .playAudioFile(response.bodyBytes);
       } else {
         // Request failed
-        print('Error: ${response.statusCode}\n${response.body}');
       }
     } catch (e) {
-      print('Error: $e');
+      throw Error();
     }
   }
 
-  void playAudioFile(Uint8List bytes) async {
-    Provider.of<Talking>(context, listen: false).changeTalkingBool(true);
-    AudioPlayer audioPlayer = AudioPlayer();
+  // void playAudioFile(Uint8List bytes) async {
+  //   Provider.of<Talking>(context, listen: false).changeTalkingBool(true);
+  //   AudioPlayer audioPlayer = AudioPlayer();
 
-    await audioPlayer.play(BytesSource(bytes));
+  //   await audioPlayer.play(BytesSource(bytes));
 
-    audioPlayer.onPlayerComplete.listen((event) {
-      print("completed audioooooooooooo");
-      Provider.of<Talking>(context, listen: false).changeTalkingBool(false);
-      Provider.of<ToggleProvider>(context, listen: false).toggleSelection();
-    });
-  }
+  //   audioPlayer.onPlayerComplete.listen((event) {
+  //     print("completed audioooooooooooo");
+  //     Provider.of<Talking>(context, listen: false).changeTalkingBool(false);
+  //     Provider.of<SpeakerToggleProvider>(context, listen: false)
+  //         .toggleSelection(isListen: true);
+  //   });
+  // }
 
   Future<String?> transcribeAudio(String audioFilePath) async {
     final dio = Dio();
@@ -256,13 +277,10 @@ You should not speak any language except $learnLang language during the conversa
         // Parse the response and return the transcribed text
         return response.data['text'];
       } else {
-        print(
-            "Failed to transcribe audio. Status code: ${response.statusCode}, ${response.data}");
         return null;
       }
     } catch (e) {
-      print("Error: $e");
-      SnackBar(content: Text("Couldn't get that, try again"));
+      const SnackBar(content: Text("Couldn't get that, try again"));
       return null;
     }
   }
