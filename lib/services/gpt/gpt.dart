@@ -8,19 +8,22 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:speakup/provider/audio_state_provider.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ChatGPTApi {
   final String name = "Ainsley";
   BuildContext context;
   final String apiChatUrl = "https://api.openai.com/v1/chat/completions";
   final String apiSpeechUrl = 'https://api.openai.com/v1/audio/speech';
-  final String openaiApiKey =
-      "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";
+  final String openaiApiKey = dotenv.env['API_KEY'] ?? "";
   // "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";
 
   ChatGPTApi(this.context);
 
-  Future<String> getChatCompletion(
-      {required String question, required String learnLang}) async {
+  Future<String> getChatCompletion({
+    required String question,
+    required String learnLang,
+  }) async {
     final response = await http.post(
       Uri.parse(apiChatUrl),
       headers: {
@@ -34,7 +37,7 @@ class ChatGPTApi {
           {
             "role": "system",
             "content":
-                "Your name is $name. Act as an $learnLang Language tutor. You are an experienced $learnLang conversation tutor known for your expertise in holding engaging conversations with foreign students according to their $learnLang proficiency level. The conversations are in forms of roleplays, discussions on provided paragraphs or offered free topics. Do not answer any question that do not seem related to $learnLang Language tutoring "
+                "Your name is $name. Act as an $learnLang Language tutor. You are an experienced $learnLang conversation tutor known for your expertise in holding engaging conversations with foreign students according to their $learnLang proficiency level. The conversations are in forms of roleplays, discussions on provided paragraphs or offered free topics. Do not answer any question that does not seem related to $learnLang Language tutoring. Also, your response should follow the characters of $learnLang, hence no weird or unrecognizable characters, write diacritical marks normally. Write it as if you are writing English"
           },
           {"role": "user", "content": question}
         ],
@@ -42,7 +45,10 @@ class ChatGPTApi {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+      // Specify the correct encoding (e.g., utf-8)
+      var decodedResponse = utf8.decode(response.bodyBytes);
+
+      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
     }
@@ -73,7 +79,9 @@ class ChatGPTApi {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+      var decodedResponse = utf8.decode(response.bodyBytes);
+
+      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
     }
@@ -121,7 +129,9 @@ class ChatGPTApi {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+      var decodedResponse = utf8.decode(response.bodyBytes);
+
+      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
     }
@@ -168,7 +178,9 @@ You should not speak any language except $learnLang language during the conversa
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+      var decodedResponse = utf8.decode(response.bodyBytes);
+
+      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
     }
@@ -196,7 +208,9 @@ You should not speak any language except $learnLang language during the conversa
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return jsonDecode(response.body)["choices"][0]["message"]["content"];
+      var decodedResponse = utf8.decode(response.bodyBytes);
+
+      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
       throw Exception(response.body);
     }
