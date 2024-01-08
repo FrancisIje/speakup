@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:speakup/screens/signup/names.dart' show emailTextController;
+import 'package:speakup/services/auth/auth_exceptions.dart';
 
 import 'package:speakup/services/auth/auth_service.dart';
 import 'package:speakup/utils/app_route_const.dart';
@@ -19,14 +21,46 @@ bool obsureText = true;
 late TextEditingController passwordTextController;
 late TextEditingController confirmPasswordTextController;
 
-void runAuth() async {
+void runAuth(BuildContext context) async {
+  var navigation = Navigator.of(context);
   try {
     await AuthService.firebase().createUser(
         email: emailTextController.text, password: passwordTextController.text);
 
     await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+
+    navigation.popAndPushNamed(AppRouteConstants.verifybuilderRouteName);
   } catch (e) {
-    print(e);
+    switch (e) {
+      case WeakPasswordAuthException():
+        Fluttertoast.showToast(
+            msg: "Passwords should be 6 Characters or more",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal[200],
+            textColor: Colors.white,
+            fontSize: 16.0);
+      case EmailAlreadyInUseAuthException():
+        Fluttertoast.showToast(
+            msg: "Email already in use",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal[200],
+            textColor: Colors.white,
+            fontSize: 16.0);
+      case InvalidEmailAuthException():
+        Fluttertoast.showToast(
+            msg: "Invalid email",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.teal[200],
+            textColor: Colors.white,
+            fontSize: 16.0);
+    }
+    debugPrintStack(label: e.toString());
   }
 }
 
@@ -140,9 +174,7 @@ class _PasswordSetScreenState extends State<PasswordSetScreen> {
                       // ));
 
                       if (_passwordFormKey.currentState!.validate()) {
-                        runAuth();
-                        Navigator.of(context).popAndPushNamed(
-                            AppRouteConstants.verifybuilderRouteName);
+                        runAuth(context);
                       }
                     },
                     style: ButtonStyle(
