@@ -9,17 +9,19 @@ import 'package:provider/provider.dart';
 import 'package:speakup/provider/audio_state_provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:speakup/services/gpt/gpt_exceptions.dart';
 
+//!Class to run all chat gpt operations
 class ChatGPTApi {
   final String name = "Ainsley";
   BuildContext context;
   final String apiChatUrl = "https://api.openai.com/v1/chat/completions";
   final String apiSpeechUrl = 'https://api.openai.com/v1/audio/speech';
   final String openaiApiKey = dotenv.env['API_KEY'] ?? "";
-  // "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";
 
   ChatGPTApi(this.context);
 
+//!Get chat response from chat gpt and decode it to utf8
   Future<String> getChatCompletion({
     required String question,
     required String learnLang,
@@ -50,10 +52,11 @@ class ChatGPTApi {
 
       return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
-      throw Exception(response.body);
+      throw CouldNotGetChatResponse();
     }
   }
 
+//! Get word translation from the language user wants to learn to the user native language chat gpt and decode it to utf8
   Future<String> getWordTranslation(
       {required String word,
       required String learnLang,
@@ -83,10 +86,11 @@ class ChatGPTApi {
 
       return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
-      throw Exception(response.body);
+      throw CouldNotGetWordTranslation();
     }
   }
 
+//! Get roleplay responses from chat gpt and decode it to utf8
   Future<String> startRolePlay(
     String question,
     String learnLang,
@@ -133,10 +137,11 @@ class ChatGPTApi {
 
       return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
-      throw Exception(response.body);
+      throw CouldNotGetRoleplayResponse();
     }
   }
 
+//! Get paragraph response from chat gpt and decode it to utf8
   Future<String> startParagraph(
     String question,
     String learnLang,
@@ -182,41 +187,43 @@ You should not speak any language except $learnLang language during the conversa
 
       return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
     } else {
-      throw Exception(response.body);
+      throw CouldNotGetParagraphResponse();
     }
   }
 
-  Future<String> generateWord(String language) async {
-    final response = await http.post(
-      Uri.parse(apiChatUrl),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $openaiApiKey",
-      },
-      body: jsonEncode({
-        "model": "gpt-3.5-turbo",
-        "max_tokens": 500,
-        "messages": [
-          {
-            "role": "system",
-            "content":
-                "Your only function is to generate one word as response, don't do or say anything else. The word must be any random word from the $language dictionary"
-          },
-          // {"role": "user", "content": question}
-        ],
-      }),
-    );
+  // Future<String> generateWord(String language) async {
+  //   final response = await http.post(
+  //     Uri.parse(apiChatUrl),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $openaiApiKey",
+  //     },
+  //     body: jsonEncode({
+  //       "model": "gpt-3.5-turbo",
+  //       "max_tokens": 500,
+  //       "messages": [
+  //         {
+  //           "role": "system",
+  //           "content":
+  //               "Your only function is to generate one word as response, don't do or say anything else. The word must be any random word from the $language dictionary"
+  //         },
+  //         // {"role": "user", "content": question}
+  //       ],
+  //     }),
+  //   );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var decodedResponse = utf8.decode(response.bodyBytes);
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     var decodedResponse = utf8.decode(response.bodyBytes);
 
-      return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
-    } else {
-      throw Exception(response.body);
-    }
-  }
+  //     return jsonDecode(decodedResponse)["choices"][0]["message"]["content"];
+  //   } else {
+  //     throw Exception(response.body);
+  //   }
+  // }
 
+//! translate text to speech and play, the AudioProvider includes function playAudioFile to play the audio
   Future<void> fetchSpeech(String input) async {
+    var audioProvider = Provider.of<AudioProvider>(context, listen: false);
     Map<String, String> headers = {
       'Authorization': 'Bearer $openaiApiKey',
       'Content-Type': 'application/json',
@@ -239,13 +246,13 @@ You should not speak any language except $learnLang language during the conversa
         // Request successful
 
         // Play the MP3
-        Provider.of<AudioProvider>(context, listen: false)
-            .playAudioFile(response.bodyBytes);
+
+        audioProvider.playAudioFile(response.bodyBytes);
       } else {
         // Request failed
       }
     } catch (e) {
-      throw Error();
+      throw CouldNotFetchSpeech();
     }
   }
 
@@ -263,6 +270,7 @@ You should not speak any language except $learnLang language during the conversa
   //   });
   // }
 
+  //! Get text from audio (which comes from the mic)
   Future<String?> transcribeAudio(String audioFilePath) async {
     final dio = Dio();
 
@@ -294,8 +302,7 @@ You should not speak any language except $learnLang language during the conversa
         return null;
       }
     } catch (e) {
-      const SnackBar(content: Text("Couldn't get that, try again"));
-      return null;
+      throw CouldNotTranscribeAudio();
     }
   }
 }
