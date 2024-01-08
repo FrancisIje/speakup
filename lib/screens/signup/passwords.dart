@@ -169,10 +169,6 @@ class _PasswordSetScreenState extends State<PasswordSetScreen> {
                   const Expanded(child: SizedBox()),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) => const LanguageScreen(),
-                      // ));
-
                       if (_passwordFormKey.currentState!.validate()) {
                         runAuth(context);
                       }
