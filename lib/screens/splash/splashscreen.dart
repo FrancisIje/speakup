@@ -4,14 +4,12 @@ import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:provider/provider.dart';
+
 import 'package:speakup/models/user.dart';
 import 'package:speakup/provider/user_provider.dart';
-// import 'package:speakup/provider/user_provider.dart';
-import 'package:speakup/screens/get_started/getstarted.dart';
-import 'package:speakup/screens/home/conversation.dart';
+
 import 'package:speakup/services/auth/firebase_auth_provider.dart';
-// import 'package:speakup/services/cloud/firebase_cloud.dart';
+import 'package:speakup/utils/app_route_const.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,27 +20,35 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   SpeakupUser? userInfo;
+  late SharedPreferences prefs;
+  var user = FirebaseAuthProvider().currentUser;
 
   @override
   Widget build(BuildContext context) {
-    var user = FirebaseAuthProvider().currentUser;
-
     return FlutterSplashScreen.fadeIn(
-      duration: Duration(seconds: 5),
-      backgroundColor: const Color(0xFF440d56),
-      onInit: () async {
-        debugPrint("On Init");
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+      asyncNavigationCallback: () async {
+        //!check if user is signed in and takes to appropriate screen
+        var userInfo = Provider.of<UserInfoProvider>(context, listen: false);
+        var nav = Navigator.of(context);
+        prefs = await SharedPreferences.getInstance();
+        await Future.delayed(const Duration(seconds: 1));
         // Retrieving object
         String? jsonString = prefs.getString('userDetails');
         if (jsonString != null) {
           var userDetails =
               SpeakupUser.fromSpeakupUserMap(json.decode(jsonString));
-          Provider.of<UserInfoProvider>(context, listen: false)
-              .setUser(userDetails);
+          userInfo.setUser(userDetails);
         }
+
+        user == null || userInfo.user == null
+            ? nav.popAndPushNamed(AppRouteConstants.getStartedRouteName)
+            : nav.popAndPushNamed(AppRouteConstants.homeRouteName);
       },
-      onEnd: () {
+      backgroundColor: const Color(0xFF440d56),
+      onInit: () {
+        debugPrint("On Init");
+      },
+      onEnd: () async {
         debugPrint("On End");
       },
       childWidget: const SizedBox(
@@ -52,12 +58,11 @@ class _SplashScreenState extends State<SplashScreen> {
           backgroundImage: AssetImage("images/speakup.png"),
         ),
       ),
-      onAnimationEnd: () => debugPrint("On Fade In End"),
-      // nextScreen: const GetStartedScreen(),
-      nextScreen:
-          user == null || Provider.of<UserInfoProvider>(context).user == null
-              ? const GetStartedScreen()
-              : const ConversationScreen(),
+      onAnimationEnd: () {
+        debugPrint("On Fade In End");
+        debugPrint(user?.email);
+        debugPrint(userInfo?.email);
+      },
     );
   }
 }
