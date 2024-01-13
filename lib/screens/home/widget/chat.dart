@@ -99,10 +99,13 @@ class _ChatWidgetState extends State<ChatWidget> {
     }
   }
 
+  late ScrollController scrollController;
+
   @override
   void initState() {
     // TODO: implement initState
     _chatGPTApi = ChatGPTApi(context);
+    scrollController = ScrollController();
 
     super.initState();
   }
@@ -110,11 +113,9 @@ class _ChatWidgetState extends State<ChatWidget> {
   @override
   void dispose() {
     // TODO: implement dispose
-
+    scrollController.dispose();
     super.dispose();
   }
-
-  final ScrollController scrollController = ScrollController();
 
   @override
   void didChangeDependencies() {
@@ -128,7 +129,9 @@ class _ChatWidgetState extends State<ChatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var wordsList = Provider.of<WordsProvider>(context).wordsToAddList;
+    final wordsList = Provider.of<WordsProvider>(
+      context,
+    ).wordsToAddList;
 
     final userSpeakUpInfo = Provider.of<UserInfoProvider>(context).user;
     void handleSubmitted(
@@ -198,7 +201,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.h),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -239,7 +242,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                                     .hideTooltip(context);
                               },
                               controller: _messagesController,
-                              cursorColor: Colors.white,
+                              cursorColor: Colors.black,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Say something ...",
@@ -319,23 +322,76 @@ class _ChatWidgetState extends State<ChatWidget> {
         ),
         body: GestureDetector(
           onTap: () async {
-            Provider.of<TooltipProvider>(context, listen: false)
-                .hideTooltip(context);
+            if (Provider.of<TooltipProvider>(context, listen: false)
+                    .isTooltipVisible ==
+                true) {
+              Provider.of<TooltipProvider>(context, listen: false)
+                  .hideTooltip(context);
+              if (wordsList.isNotEmpty && wordsList.length > 1) {
+                var userUpdate = SpeakupUser(
+                        firstName: "Broooo",
+                        lastName: userSpeakUpInfo!.lastName,
+                        email: userSpeakUpInfo.email,
+                        phoneNumber: userSpeakUpInfo.phoneNumber,
+                        targetLanguage: userSpeakUpInfo.targetLanguage,
+                        targetLangLevel: userSpeakUpInfo.targetLangLevel,
+                        nativeLanguage: userSpeakUpInfo.nativeLanguage,
+                        profilePictureUrl: userSpeakUpInfo.profilePictureUrl,
+                        tutorGender: userSpeakUpInfo.tutorGender,
+                        vocWords: null)
+                    .toSpeakupUserMap();
 
-            var userUpdate = SpeakupUser(
-                    firstName: "Broooo",
-                    lastName: userSpeakUpInfo!.lastName,
-                    email: userSpeakUpInfo.email,
-                    phoneNumber: userSpeakUpInfo.phoneNumber,
-                    targetLanguage: userSpeakUpInfo.targetLanguage,
-                    targetLangLevel: userSpeakUpInfo.targetLangLevel,
-                    nativeLanguage: userSpeakUpInfo.nativeLanguage,
-                    profilePictureUrl: userSpeakUpInfo.profilePictureUrl,
-                    tutorGender: userSpeakUpInfo.tutorGender,
-                    vocWords: wordsList ?? [])
-                .toSpeakupUserMap();
+                await FirebaseCloud().updateUserData(userUpdate);
+              }
+            }
+          },
+          onPanDown: (details) async {
+            if (Provider.of<TooltipProvider>(context, listen: false)
+                    .isTooltipVisible ==
+                true) {
+              Provider.of<TooltipProvider>(context, listen: false)
+                  .hideTooltip(context);
+              if (wordsList.isNotEmpty && wordsList.length > 1) {
+                var userUpdate = SpeakupUser(
+                        firstName: "Broooo",
+                        lastName: userSpeakUpInfo!.lastName,
+                        email: userSpeakUpInfo.email,
+                        phoneNumber: userSpeakUpInfo.phoneNumber,
+                        targetLanguage: userSpeakUpInfo.targetLanguage,
+                        targetLangLevel: userSpeakUpInfo.targetLangLevel,
+                        nativeLanguage: userSpeakUpInfo.nativeLanguage,
+                        profilePictureUrl: userSpeakUpInfo.profilePictureUrl,
+                        tutorGender: userSpeakUpInfo.tutorGender,
+                        vocWords: null)
+                    .toSpeakupUserMap();
 
-            await FirebaseCloud().updateUserData(userUpdate);
+                await FirebaseCloud().updateUserData(userUpdate);
+              }
+            }
+          },
+          onPanUpdate: (details) async {
+            if (Provider.of<TooltipProvider>(context, listen: false)
+                    .isTooltipVisible ==
+                true) {
+              Provider.of<TooltipProvider>(context, listen: false)
+                  .hideTooltip(context);
+              if (wordsList.isNotEmpty && wordsList.length > 1) {
+                var userUpdate = SpeakupUser(
+                        firstName: "Broooo",
+                        lastName: userSpeakUpInfo!.lastName,
+                        email: userSpeakUpInfo.email,
+                        phoneNumber: userSpeakUpInfo.phoneNumber,
+                        targetLanguage: userSpeakUpInfo.targetLanguage,
+                        targetLangLevel: userSpeakUpInfo.targetLangLevel,
+                        nativeLanguage: userSpeakUpInfo.nativeLanguage,
+                        profilePictureUrl: userSpeakUpInfo.profilePictureUrl,
+                        tutorGender: userSpeakUpInfo.tutorGender,
+                        vocWords: null)
+                    .toSpeakupUserMap();
+
+                await FirebaseCloud().updateUserData(userUpdate);
+              }
+            }
           },
           child: Visibility(
             visible: Provider.of<IsChatVisibleProvider>(context).isChatVisible,

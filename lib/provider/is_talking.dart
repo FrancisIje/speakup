@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class Talking with ChangeNotifier {
-  bool _isTalking = false;
+// class Talking with ChangeNotifier {
+//   bool _isTalking = false;
 
-  bool get isTalking => _isTalking;
+//   bool get isTalking => _isTalking;
 
-  void changeTalkingBool(bool isTalking) {
-    _isTalking = isTalking;
-    notifyListeners();
-  }
-}
+//   void changeTalkingBool(bool isTalking) {
+//     _isTalking = isTalking;
+//     notifyListeners();
+//   }
+// }

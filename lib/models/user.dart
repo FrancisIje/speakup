@@ -38,16 +38,18 @@ class SpeakupUser {
   }
 
   static SpeakupUser fromSpeakupUserMap(Map<String, dynamic> map) {
+    List<String>? vocWords =
+        (map['vocWords'] as List<dynamic>?)?.cast<String>();
     return SpeakupUser(
-        firstName: map['firstName'],
-        lastName: map['lastName'],
-        email: map['email'],
-        phoneNumber: map['phoneNumber'],
-        targetLanguage: map['targetLanguage'],
-        targetLangLevel: map['targetLangLevel'],
-        nativeLanguage: map['nativeLanguage'],
-        profilePictureUrl: map['profilePictureUrl'],
-        tutorGender: map['tutorGender'],
-        vocWords: map['vocWords']);
+        firstName: map['firstName'] ?? "",
+        lastName: map['lastName'] ?? "",
+        email: map['email'] ?? "",
+        phoneNumber: map['phoneNumber'] ?? "",
+        targetLanguage: map['targetLanguage'] ?? "",
+        targetLangLevel: map['targetLangLevel'] ?? "",
+        nativeLanguage: map['nativeLanguage'] ?? "",
+        profilePictureUrl: map['profilePictureUrl'] ?? "",
+        tutorGender: map['tutorGender'] ?? "",
+        vocWords: vocWords);
   }
 }

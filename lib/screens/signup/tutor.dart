@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speakup/models/user.dart';
@@ -149,11 +150,11 @@ class _TutorScreenState extends State<TutorScreen> {
                           height: 10.h,
                         ),
                         Visibility(
-                          child: Text(
+                          visible: selectedTutor == "Female",
+                          child: const Text(
                             "Female",
                             style: TextStyle(color: Colors.black),
                           ),
-                          visible: selectedTutor == "Female",
                         ),
                         SizedBox(
                           width: appWidth(context) * 0.46,
@@ -203,9 +204,8 @@ class _TutorScreenState extends State<TutorScreen> {
                 const Expanded(child: SizedBox()),
                 ElevatedButton(
                   onPressed: () async {
-                    print("buttom");
+                    var nav = Navigator.of(context);
                     try {
-                      print("tapped");
                       SpeakupUser user = SpeakupUser(
                           firstName: firstNameTextController.text,
                           lastName: lastNameTextController.text,
@@ -220,8 +220,7 @@ class _TutorScreenState extends State<TutorScreen> {
                           .updateUserData(user.toSpeakupUserMap());
                       SpeakupUser? firebaseUser =
                           await FirebaseCloud().getCurrentUser();
-                      print(firebaseUser?.profilePictureUrl ??
-                          "no firebaseUser img");
+
                       if (firebaseUser != null) {
                         // Storing object
                         SharedPreferences prefs =
@@ -229,12 +228,19 @@ class _TutorScreenState extends State<TutorScreen> {
                         prefs.setString('userDetails',
                             json.encode(firebaseUser.toSpeakupUserMap()));
 
-                        Navigator.of(context).push(MaterialPageRoute(
+                        nav.push(MaterialPageRoute(
                           builder: (context) => const ConversationScreen(),
                         ));
                       }
                     } catch (e) {
-                      print(e);
+                      Fluttertoast.showToast(
+                          msg: "Unable to create account",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.teal[200],
+                          textColor: Colors.white,
+                          fontSize: 16.0);
                     }
                   },
                   style: ButtonStyle(

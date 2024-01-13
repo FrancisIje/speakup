@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:speakup/screens/signup/pfp.dart';
-import 'package:speakup/services/auth/auth_provider.dart';
-import 'package:speakup/services/auth/auth_service.dart';
+// import 'package:speakup/screens/signup/pfp.dart';
+// import 'package:speakup/services/auth/auth_provider.dart';
+// import 'package:speakup/services/auth/auth_service.dart';
 
 import 'package:speakup/utils/app_route_const.dart';
 import 'package:speakup/utils/responsive.dart';

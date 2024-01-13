@@ -16,5 +16,11 @@ class AppRouteConstants {
   static const personalDetailsRouteName = "/personal-details";
   static const speechControllerRouteName = "/speech-control";
   static const reviewRouteName = "/review";
+  static const deleteaccountRouteName = "/delete-account";
+  static const subscriptionRouteName = "/subscription";
   static const termsRouteName = "/toc";
+  static const contactUsRouteName = "/contact-us";
+  static const faqRouteName = "/faq";
+  static const vocTestRouteName = "/vocTest";
+  static const vocabularyRouteName = "/vocabulary";
 }

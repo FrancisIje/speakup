@@ -27,9 +27,10 @@ class TooltipProvider with ChangeNotifier {
             child: Material(
               color: Colors.transparent,
               child: CustomPaint(
-                painter: customStyleArrow(),
+                painter: CustomStyleArrow(),
                 child: Container(
-                  width: 160.w,
+                  height: 100.h,
+                  // width: 160.w,
                   color: const Color.fromRGBO(59, 55, 79, 1),
                   padding: EdgeInsets.only(
                       left: 15.w, right: 15.w, bottom: 20.h, top: 20.h),
@@ -70,14 +71,13 @@ class TooltipProvider with ChangeNotifier {
                             width: 8.w,
                           ),
                           GestureDetector(
-                              onTap: () async {
-                                Provider.of<TextWordProvider>(context,
-                                        listen: false)
-                                    .toggleSelection(isText: false);
-
+                              onTap: () {
                                 Provider.of<WordsProvider>(context,
                                         listen: false)
                                     .addWord(word);
+                                Provider.of<TextWordProvider>(context,
+                                        listen: false)
+                                    .toggleSelection(isText: false);
                               },
                               child: Consumer<TextWordProvider>(
                                 builder: (context, textWordProvider, child) =>

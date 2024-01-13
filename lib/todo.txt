@@ -1,0 +1,33 @@
+use this to save user info instead of provider:
+
+
+
+onPressed: () async {
+  if (formKey.currentState!.validate()) {
+    print('logged in');
+
+    await AuthService.firebase().logIn(
+      email: emailTextController.text,
+      password: passwordTextController.text,
+    );
+
+    SpeakupUser? user = await FirebaseCloud().getCurrentUser();
+    print(user?.profilePictureUrl ?? "no user img");
+
+    if (user != null) {
+      // Store user information in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('userId', user.userId);
+      prefs.setString('username', user.username);
+      prefs.setString('email', user.email);
+      // Add more data as needed
+
+      // Navigate to the next screen
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const ConversationScreen(),
+      ));
+    }
+  }
+},
+
+

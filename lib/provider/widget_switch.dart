@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class ToggleProvider extends ChangeNotifier {
-  bool _isFirstWidgetSelected = true;
+// class SpeakerToggleProvider extends ChangeNotifier {
+//   bool _isListening = true;
 
-  bool get isFirstWidgetSelected => _isFirstWidgetSelected;
+//   bool get isListening => _isListening;
 
-  void toggleSelection() {
-    _isFirstWidgetSelected = !_isFirstWidgetSelected;
-    notifyListeners();
-  }
-}
+//   void toggleSelection({required bool isListen}) {
+//     _isListening = isListen;
+//     notifyListeners();
+//   }
+// }

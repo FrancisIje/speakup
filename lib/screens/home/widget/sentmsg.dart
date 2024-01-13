@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:speakup/provider/user_provider.dart';
 import 'package:speakup/utils/responsive.dart';
 
 class SentMsg extends StatelessWidget {
@@ -13,9 +15,11 @@ class SentMsg extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const CircleAvatar(
-            backgroundImage: NetworkImage(
-                "https://images.unsplash.com/photo-1504203772830-87fba72385ee?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Ym95fGVufDB8fDB8fHww"),
+          CircleAvatar(
+            backgroundImage: NetworkImage(Provider.of<UserInfoProvider>(context)
+                    .user
+                    ?.profilePictureUrl ??
+                ""),
           ),
           SizedBox(
             width: 3.w,

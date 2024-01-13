@@ -8,7 +8,8 @@ class ChatMessageProvider extends ChangeNotifier {
 
   void insertMessage(ChatMessage message) {
     _messages.insert(0, message);
-    notifyListeners();
+    Future.delayed(const Duration(milliseconds: 200))
+        .then((value) => notifyListeners());
   }
 
   void resetMessage() {
