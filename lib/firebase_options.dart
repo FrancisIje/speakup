@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,18 +49,8 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBpt3QHHtgXprKdqEFRki8hacKBITSl86s',
-    appId: '1:617408675528:web:4a1ec02df09cca2e6feffd',
-    messagingSenderId: '617408675528',
-    projectId: 'speakup-b938b',
-    authDomain: 'speakup-b938b.firebaseapp.com',
-    storageBucket: 'speakup-b938b.appspot.com',
-    measurementId: 'G-N91J3QE9EF',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC3Ul7HslpTjfd8BmbWfeNWClCAMWkOEtw',
+    apiKey: 'AIzaSyDTMPWzcSFfgz2OIkV5-QQcJ3Tlr01a640',
     appId: '1:617408675528:android:c23efb6806a29d936feffd',
     messagingSenderId: '617408675528',
     projectId: 'speakup-b938b',
@@ -62,20 +58,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDlw7GUf0USJ222nkuJ7HikeNCKQy6N9_U',
+    apiKey: 'AIzaSyBrfX38VnZzCjDZ5GXJohrl6xqC5tJZVYk',
     appId: '1:617408675528:ios:8e66a69222a5ecb06feffd',
     messagingSenderId: '617408675528',
     projectId: 'speakup-b938b',
     storageBucket: 'speakup-b938b.appspot.com',
     iosBundleId: 'com.example.speakup',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDlw7GUf0USJ222nkuJ7HikeNCKQy6N9_U',
-    appId: '1:617408675528:ios:c3be5bcc44643ace6feffd',
-    messagingSenderId: '617408675528',
-    projectId: 'speakup-b938b',
-    storageBucket: 'speakup-b938b.appspot.com',
-    iosBundleId: 'com.example.speakup.RunnerTests',
   );
 }
